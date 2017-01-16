@@ -4,8 +4,15 @@ import android.os.Handler;
 
 import com.cins.daily.mvp.interactor.NewsInteractor;
 
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
+
+import rx.Observable;
+import rx.Observer;
+import rx.android.schedulers.AndroidSchedulers;
+import rx.functions.Func1;
+import rx.schedulers.Schedulers;
 
 /**
  * Created by Eric on 2017/1/15.
@@ -20,6 +27,40 @@ public class NewsInteractorImpl implements NewsInteractor {
                 listener.onFinished(createArrayList());
             }
         }, 2000);
+
+        final List<String> list = new ArrayList<>();
+
+        Observable.from(createArrayList())
+                .filter(new Func1<String, Boolean>() {
+                    @Override
+                    public Boolean call(String s) {
+                        return !s.contains("12");
+                    }
+                })
+                .map(new Func1<String, String>() {
+                    @Override
+                    public String call(String s) {
+                        return s + "_rxjava";
+                    }
+                })
+                .subscribeOn(Schedulers.io())
+                .observeOn(AndroidSchedulers.mainThread())
+                .subscribe(new Observer<String>() {
+                    @Override
+                    public void onCompleted() {
+                        listener.onFinished(list);
+                    }
+
+                    @Override
+                    public void onError(Throwable e) {
+
+                    }
+
+                    @Override
+                    public void onNext(String s) {
+                        list.add(s);
+                    }
+                });
     }
 
     private List<String> createArrayList() {
@@ -28,7 +69,24 @@ public class NewsInteractorImpl implements NewsInteractor {
                 "Item 12",
                 "Item 12",
                 "Item 12",
-                "Item 12"
+                "Item 12",
+                "Item 12",
+                "Item 12",
+                "Item 12",
+                "Item 12",
+                "Item 12",
+                "Item 13",
+                "Item 13",
+                "Item 13",
+                "Item 13",
+                "Item 13",
+                "Item 13",
+                "Item 13",
+                "Item 13",
+                "Item 13",
+                "Item 13",
+                "Item 13",
+                "Item 13"
         );
     }
 }

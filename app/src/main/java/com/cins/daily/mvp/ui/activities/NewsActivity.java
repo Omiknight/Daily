@@ -7,6 +7,7 @@ import android.support.design.widget.Snackbar;
 import android.support.design.widget.TabLayout;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
+import android.support.v4.app.FragmentPagerAdapter;
 import android.support.v4.app.FragmentStatePagerAdapter;
 import android.support.v4.view.GravityCompat;
 import android.support.v4.view.ViewPager;
@@ -86,7 +87,7 @@ public class NewsActivity extends AppCompatActivity
         mTabs.setupWithViewPager(mViewPager);
     }
 
-    private class NewsFragmentPagerAdapter extends FragmentStatePagerAdapter {
+    private class NewsFragmentPagerAdapter extends FragmentPagerAdapter {
 
         private final String[] titles = {"要闻", "科技","娱乐"};
 

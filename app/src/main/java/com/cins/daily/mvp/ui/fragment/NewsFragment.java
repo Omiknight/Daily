@@ -10,6 +10,8 @@ import android.view.ViewGroup;
 import android.widget.ProgressBar;
 
 import com.cins.daily.R;
+import com.cins.daily.component.DaggerNewsComponent;
+import com.cins.daily.module.NewsModule;
 import com.cins.daily.mvp.presenter.NewsPresenter;
 import com.cins.daily.mvp.presenter.impl.NewsPresenterImpl;
 import com.cins.daily.mvp.ui.adapter.NewsRecyclerViewAdapter;
@@ -17,6 +19,8 @@ import com.cins.daily.mvp.ui.fragment.base.BaseFragment;
 import com.cins.daily.mvp.view.NewsView;
 
 import java.util.List;
+
+import javax.inject.Inject;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
@@ -32,9 +36,12 @@ public class NewsFragment extends BaseFragment implements NewsView {
     @BindView(R.id.progress_bar)
     ProgressBar mProgressBar;
 
-    private List<String> mNewsList;
-    private NewsRecyclerViewAdapter mNewsRecyclerViewAdapter;
-    private NewsPresenter mNewsPresenter;
+    @Inject
+    NewsRecyclerViewAdapter mNewsRecyclerViewAdapter;
+    @Inject
+    NewsPresenter mNewsPresenter;
+
+
 
     @Nullable
     @Override
@@ -45,10 +52,11 @@ public class NewsFragment extends BaseFragment implements NewsView {
         mNewsRv.setHasFixedSize(true);
         //setting the LayoutManager
         mNewsRv.setLayoutManager(new LinearLayoutManager(getActivity(), LinearLayoutManager.VERTICAL, false));
-        mNewsRecyclerViewAdapter = new NewsRecyclerViewAdapter(mNewsList);
-        mNewsRv.setAdapter(mNewsRecyclerViewAdapter);
 
-        mNewsPresenter = new NewsPresenterImpl(this);
+        DaggerNewsComponent.builder()
+                .newsModule(new NewsModule(this))
+                .build()
+                .inject(this);
         mNewsPresenter.onCreateView();
         return view;
     }
@@ -60,9 +68,8 @@ public class NewsFragment extends BaseFragment implements NewsView {
 
     @Override
     public void setItems(List<String> items) {
-        mNewsList.clear();
-        mNewsList.addAll(items);
-        mNewsRecyclerViewAdapter.notifyDataSetChanged();
+        mNewsRecyclerViewAdapter.setItems(items);
+        mNewsRv.setAdapter(mNewsRecyclerViewAdapter);
     }
 
     @Override

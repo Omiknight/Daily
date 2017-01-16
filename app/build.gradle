@@ -1,4 +1,5 @@
 apply plugin: 'com.android.application'
+apply plugin: 'com.neenbedankt.android-apt'
 
 android {
     compileSdkVersion 25
@@ -27,9 +28,16 @@ dependencies {
     })
     compile 'com.android.support:appcompat-v7:25.1.0'
     compile 'com.android.support:design:25.1.0'
-    //apt 'com.jakewharton:butterknife-compiler:8.0.1'
-
+    apt 'com.jakewharton:butterknife-compiler:8.0.1'
     compile 'com.jakewharton:butterknife:8.0.1'
+    //指定注解处理器
+    apt 'com.google.dagger:dagger-compiler:2.2'
+    //添加android缺失的部分javax注解
+    provided 'org.glassfish:javax.annotation:10.0-b28'
+    //dagger公用api
+    compile 'com.google.dagger:dagger:2.2'
+
+
     compile 'com.android.support:support-v4:25.1.0'
     compile 'com.android.support:recyclerview-v7:25.1.0'
     debugCompile 'com.squareup.leakcanary:leakcanary-android:1.4-beta2'

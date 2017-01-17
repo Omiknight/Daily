@@ -4,11 +4,18 @@ import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ImageView;
 import android.widget.TextView;
 
+import com.bumptech.glide.Glide;
+import com.cins.daily.App;
 import com.cins.daily.R;
+import com.cins.daily.mvp.entity.NewsSummary;
 
 import java.util.List;
+
+import butterknife.BindView;
+import butterknife.ButterKnife;
 
 /**
  * Created by Eric on 2017/1/16.
@@ -16,36 +23,49 @@ import java.util.List;
 
 public class NewsRecyclerViewAdapter extends RecyclerView.Adapter<NewsRecyclerViewAdapter.ViewHolder> {
 
-    private List<String> mNewsList;
+    private List<NewsSummary> mNewsSummaryList;
 
-    public void setItems(List<String> items) {
-        this.mNewsList = items;
+    public void setItems(List<NewsSummary> items) {
+        this.mNewsSummaryList = items;
     }
 
     @Override
     public ViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
         View view =
-                LayoutInflater.from(parent.getContext()).inflate(R.layout.list_news, parent, false);
+                LayoutInflater.from(parent.getContext()).inflate(R.layout.item_news, parent, false);
         return new ViewHolder(view);
     }
 
     @Override
     public void onBindViewHolder(NewsRecyclerViewAdapter.ViewHolder holder, int position) {
-        String msg = mNewsList.get(position);
-        holder.mItemTv.setText(msg);
+        String title = mNewsSummaryList.get(position).getTitle();
+        String digest = mNewsSummaryList.get(position).getDigest();
+        String imgSrc = mNewsSummaryList.get(position).getImgsrc();
+
+        holder.mNewsSummaryTitleTv.setText(title);
+        holder.mNewsSummaryDigestTv.setText(digest);
+
+
     }
 
     @Override
     public int getItemCount() {
-        return mNewsList.size();
+        return mNewsSummaryList.size();
     }
 
 
     public class ViewHolder extends RecyclerView.ViewHolder {
-        TextView mItemTv;
+
+        @BindView(R.id.news_summary_photo_iv)
+        ImageView mNewsSummaryPhotoIv;
+        @BindView(R.id.news_summary_title_tv)
+        TextView mNewsSummaryTitleTv;
+        @BindView(R.id.news_summary_digest_tv)
+        TextView mNewsSummaryDigestTv;
+
         public ViewHolder(View itemView) {
             super(itemView);
-            mItemTv = (TextView) itemView.findViewById(R.id.msg);
+            ButterKnife.bind(this, itemView);
         }
     }
 }

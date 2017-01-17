@@ -4,6 +4,7 @@ import android.os.Handler;
 
 import com.cins.daily.common.ApiConstants;
 import com.cins.daily.common.HostType;
+import com.cins.daily.listener.RequestCallBack;
 import com.cins.daily.mvp.entity.NewsSummary;
 import com.cins.daily.mvp.interactor.NewsInteractor;
 import com.cins.daily.repository.network.RetrofitManager;
@@ -34,8 +35,14 @@ public class NewsInteractorImpl implements NewsInteractor<List<NewsSummary>> {
 
 
     @Override
-    public void loadNews(final OnFinishedListener listener) {
+    public void loadNews(final RequestCallBack<List<NewsSummary>> listener) {
+        // 对API调用了observeOn(MainThread)之后，线程会跑在主线程上，包括onComplete也是，
+        // unsubscribe也在主线程，然后如果这时候调用call.cancel会导致NetworkOnMainThreadException
+        // 加一句unsubscribeOn(io)
         RetrofitManager.getInstance(HostType.NETEASE_NEWS_VIDEO).getNewsListObservable(type, id, startPage)
+                .subscribeOn(Schedulers.io())
+                .observeOn(AndroidSchedulers.mainThread())
+                .unsubscribeOn(Schedulers.io())
                 .flatMap(new Func1<Map<String, List<NewsSummary>>, Observable<NewsSummary>>() {
                     @Override
                     public Observable<NewsSummary> call(Map<String, List<NewsSummary>> map) {
@@ -60,12 +67,12 @@ public class NewsInteractorImpl implements NewsInteractor<List<NewsSummary>> {
 
                     @Override
                     public void onError(Throwable e) {
-
+                        listener.onError("加载失败");
                     }
 
                     @Override
                     public void onNext(List<NewsSummary> newsSummaries) {
-                        listener.onFinished(newsSummaries);
+                        listener.success(newsSummaries);
                     }
                 });
     }

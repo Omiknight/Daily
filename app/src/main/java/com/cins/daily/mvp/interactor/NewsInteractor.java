@@ -1,5 +1,7 @@
 package com.cins.daily.mvp.interactor;
 
+import com.cins.daily.listener.RequestCallBack;
+
 import java.util.List;
 
 /**
@@ -8,9 +10,5 @@ import java.util.List;
 
 public interface NewsInteractor<T> {
 
-    interface OnFinishedListener<T> {
-        void onFinished(T items);
-    }
-
-    void loadNews(OnFinishedListener<T> listener);
+    void loadNews(RequestCallBack<T> listener);
 }

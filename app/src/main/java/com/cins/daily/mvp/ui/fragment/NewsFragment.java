@@ -12,8 +12,8 @@ import android.widget.ProgressBar;
 import com.cins.daily.R;
 import com.cins.daily.component.DaggerNewsComponent;
 import com.cins.daily.module.NewsModule;
+import com.cins.daily.mvp.entity.NewsSummary;
 import com.cins.daily.mvp.presenter.NewsPresenter;
-import com.cins.daily.mvp.presenter.impl.NewsPresenterImpl;
 import com.cins.daily.mvp.ui.adapter.NewsRecyclerViewAdapter;
 import com.cins.daily.mvp.ui.fragment.base.BaseFragment;
 import com.cins.daily.mvp.view.NewsView;
@@ -67,7 +67,7 @@ public class NewsFragment extends BaseFragment implements NewsView {
     }
 
     @Override
-    public void setItems(List<String> items) {
+    public void setItems(List<NewsSummary> items) {
         mNewsRecyclerViewAdapter.setItems(items);
         mNewsRv.setAdapter(mNewsRecyclerViewAdapter);
     }

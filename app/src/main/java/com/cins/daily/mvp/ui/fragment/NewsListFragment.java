@@ -29,7 +29,7 @@ import butterknife.ButterKnife;
  * Created by Eric on 2017/1/16.
  */
 
-public class NewsFragment extends BaseFragment implements NewsView {
+public class NewsListFragment extends BaseFragment implements NewsView {
 
     @BindView(R.id.news_rv)
     RecyclerView mNewsRv;

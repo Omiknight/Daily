@@ -9,7 +9,7 @@ import android.view.View;
 import android.view.WindowManager;
 
 import com.cins.daily.R;
-import com.cins.daily.utils.MyUtil;
+import com.cins.daily.utils.MyUtils;
 
 
 /**
@@ -26,7 +26,7 @@ public class BaseActivity extends AppCompatActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        if (MyUtil.isNightMode()) {
+        if (MyUtils.isNightMode()) {
             AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_YES);
 
             initNightView();

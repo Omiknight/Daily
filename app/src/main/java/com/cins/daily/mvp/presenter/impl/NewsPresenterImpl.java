@@ -1,6 +1,6 @@
 package com.cins.daily.mvp.presenter.impl;
 
-import com.cins.daily.listener.RequestCallBack;
+import com.cins.daily.greendao.NewsChannelTable;
 import com.cins.daily.mvp.entity.NewsSummary;
 import com.cins.daily.mvp.interactor.NewsInteractor;
 import com.cins.daily.mvp.interactor.impl.NewsInteractorImpl;
@@ -13,53 +13,25 @@ import java.util.List;
  * Created by Eric on 2017/1/16.
  */
 
-public class NewsPresenterImpl implements NewsPresenter, RequestCallBack<List<NewsSummary>>{
+public class NewsPresenterImpl extends BasePresenterImpl<NewsView, List<NewsChannelTable>>
+       implements NewsPresenter {
 
-    private NewsView mNewsView;
-    private NewsInteractor<List<NewsSummary>> mNewsInteractor;
+    private NewsInteractor<List<NewsChannelTable>> mNewsInteractor;
 
     public NewsPresenterImpl(NewsView newsView) {
-        mNewsView = newsView;
+        mView = newsView;
+        mNewsInteractor = new NewsInteractorImpl();
     }
 
     @Override
-    public void onCreateView() {
-        if (mNewsView != null) {
-            mNewsView.showProgress();
-        }
-        mNewsInteractor.loadNews(this);
+    public void onCreate() {
+        super.onCreate();
+        mSubscription = mNewsInteractor.lodeNewsChannels(this);
     }
 
     @Override
-    public void onFabClicked() {
-
-    }
-
-    @Override
-    public void onItemClicked(int position) {
-
-    }
-
-    @Override
-    public void onResume() {
-
-    }
-
-    @Override
-    public void onDestroy() {
-        mNewsView = null;
-    }
-
-    @Override
-    public void success(List<NewsSummary> items) {
-        if (mNewsView != null) {
-            mNewsView.setItems(items);
-            mNewsView.hideProgress();
-        }
-    }
-
-    @Override
-    public void onError(String errorMsg) {
-        mNewsView.showMessage(errorMsg);
+    public void success(List<NewsChannelTable> data) {
+        super.success(data);
+        mView.initViewPager(data);
     }
 }

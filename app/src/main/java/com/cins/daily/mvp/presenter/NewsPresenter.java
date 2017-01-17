@@ -8,7 +8,4 @@ import com.cins.daily.mvp.presenter.base.BasePresenter;
 
 public interface NewsPresenter extends BasePresenter {
 
-    void onFabClicked();
-
-    void onItemClicked(int position);
 }

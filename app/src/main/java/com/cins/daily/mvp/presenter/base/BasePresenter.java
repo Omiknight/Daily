@@ -5,9 +5,9 @@ package com.cins.daily.mvp.presenter.base;
  */
 
 public interface BasePresenter {
-    void onResume();
+//    void onResume();
 
-    void onCreateView();
+    void onCreate();
 
     void onDestroy();
 }

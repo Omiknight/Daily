@@ -8,12 +8,10 @@ import android.support.design.widget.TabLayout;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentPagerAdapter;
-import android.support.v4.app.FragmentStatePagerAdapter;
 import android.support.v4.view.GravityCompat;
 import android.support.v4.view.ViewPager;
 import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.ActionBarDrawerToggle;
-import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.view.Menu;
 import android.view.MenuItem;
@@ -21,8 +19,8 @@ import android.view.View;
 
 import com.cins.daily.R;
 import com.cins.daily.mvp.ui.activities.base.BaseActivity;
-import com.cins.daily.mvp.ui.fragment.NewsFragment;
-import com.cins.daily.utils.MyUtil;
+import com.cins.daily.mvp.ui.fragment.NewsListFragment;
+import com.cins.daily.utils.MyUtils;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -114,9 +112,9 @@ public class NewsActivity extends BaseActivity
     }
 
     private void initFragment() {
-        NewsFragment newsFragment1 = new NewsFragment();
-        NewsFragment newsFragment2 = new NewsFragment();
-        NewsFragment newsFragment3 = new NewsFragment();
+        NewsListFragment newsFragment1 = new NewsListFragment();
+        NewsListFragment newsFragment2 = new NewsListFragment();
+        NewsListFragment newsFragment3 = new NewsListFragment();
 
         mNewsFragmentList = new ArrayList<>();
         mNewsFragmentList.add(newsFragment1);
@@ -151,12 +149,12 @@ public class NewsActivity extends BaseActivity
 
         //noinspection SimplifiableIfStatement
         if (id == R.id.action_settings) {
-            if (MyUtil.isNightMode()) {
+            if (MyUtils.isNightMode()) {
                 changeToDay();
-                MyUtil.saveTheme(false);
+                MyUtils.saveTheme(false);
             } else {
                 changeToNight();
-                MyUtil.saveTheme(true);
+                MyUtils.saveTheme(true);
             }
             recreate();
             return true;

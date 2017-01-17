@@ -6,11 +6,11 @@ import java.util.List;
  * Created by Eric on 2017/1/15.
  */
 
-public interface NewsInteractor {
+public interface NewsInteractor<T> {
 
-    interface OnFinishedListener {
-        void onFinished(List<String> items);
+    interface OnFinishedListener<T> {
+        void onFinished(T items);
     }
 
-    void loadNews(OnFinishedListener listener);
+    void loadNews(OnFinishedListener<T> listener);
 }

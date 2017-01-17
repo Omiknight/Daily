@@ -2,53 +2,60 @@ package com.cins.daily.mvp.interactor.impl;
 
 import android.os.Handler;
 
+import com.cins.daily.common.ApiConstants;
+import com.cins.daily.common.HostType;
+import com.cins.daily.mvp.entity.NewsSummary;
 import com.cins.daily.mvp.interactor.NewsInteractor;
+import com.cins.daily.repository.network.RetrofitManager;
 
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
+import java.util.Map;
 
+import retrofit2.Retrofit;
 import rx.Observable;
 import rx.Observer;
+import rx.Subscriber;
 import rx.android.schedulers.AndroidSchedulers;
 import rx.functions.Func1;
+import rx.functions.Func2;
 import rx.schedulers.Schedulers;
 
 /**
  * Created by Eric on 2017/1/15.
  */
 
-public class NewsInteractorImpl implements NewsInteractor {
+public class NewsInteractorImpl implements NewsInteractor<List<NewsSummary>> {
+
+    private String type = ApiConstants.HEADLINE_TYPE;
+    private String id = ApiConstants.HEADLINE_ID;
+    private int startPage = 0;
+
+
     @Override
     public void loadNews(final OnFinishedListener listener) {
-        new Handler().postDelayed(new Runnable() {
-            @Override
-            public void run() {
-                listener.onFinished(createArrayList());
-            }
-        }, 2000);
-
-        final List<String> list = new ArrayList<>();
-
-        Observable.from(createArrayList())
-                .filter(new Func1<String, Boolean>() {
+        RetrofitManager.getInstance(HostType.NETEASE_NEWS_VIDEO).getNewsListObservable(type, id, startPage)
+                .flatMap(new Func1<Map<String, List<NewsSummary>>, Observable<NewsSummary>>() {
                     @Override
-                    public Boolean call(String s) {
-                        return !s.contains("12");
+                    public Observable<NewsSummary> call(Map<String, List<NewsSummary>> map) {
+                        if (id.endsWith(ApiConstants.HOUSE_ID)) {
+                            // 房产实际上针对地区的它的id与返回key不同
+                            return Observable.from(map.get("北京"));
+                        }
+                        return Observable.from(map.get(id));
                     }
                 })
-                .map(new Func1<String, String>() {
+                .toSortedList(new Func2<NewsSummary, NewsSummary, Integer>() {
                     @Override
-                    public String call(String s) {
-                        return s + "_rxjava";
+                    public Integer call(NewsSummary newsSummary, NewsSummary newsSummary2) {
+                        return newsSummary2.getPtime().compareTo(newsSummary.getPtime());
                     }
                 })
-                .subscribeOn(Schedulers.io())
-                .observeOn(AndroidSchedulers.mainThread())
-                .subscribe(new Observer<String>() {
+                .subscribe(new Subscriber<List<NewsSummary>>() {
                     @Override
                     public void onCompleted() {
-                        listener.onFinished(list);
+
                     }
 
                     @Override
@@ -57,36 +64,10 @@ public class NewsInteractorImpl implements NewsInteractor {
                     }
 
                     @Override
-                    public void onNext(String s) {
-                        list.add(s);
+                    public void onNext(List<NewsSummary> newsSummaries) {
+                        listener.onFinished(newsSummaries);
                     }
                 });
     }
 
-    private List<String> createArrayList() {
-        return Arrays.asList(
-                "Item 12",
-                "Item 12",
-                "Item 12",
-                "Item 12",
-                "Item 12",
-                "Item 12",
-                "Item 12",
-                "Item 12",
-                "Item 12",
-                "Item 12",
-                "Item 13",
-                "Item 13",
-                "Item 13",
-                "Item 13",
-                "Item 13",
-                "Item 13",
-                "Item 13",
-                "Item 13",
-                "Item 13",
-                "Item 13",
-                "Item 13",
-                "Item 13"
-        );
-    }
 }

@@ -4,6 +4,7 @@ import android.os.Handler;
 
 import com.cins.daily.common.ApiConstants;
 import com.cins.daily.common.HostType;
+import com.cins.daily.listener.RequestCallBack;
 import com.cins.daily.mvp.entity.NewsSummary;
 import com.cins.daily.mvp.interactor.NewsInteractor;
 import com.cins.daily.repository.network.RetrofitManager;
@@ -25,8 +26,9 @@ import rx.schedulers.Schedulers;
 
 public class NewsInteractorSample implements NewsInteractor{
 
+
     @Override
-    public void loadNews(final NewsInteractor.OnFinishedListener listener) {
+    public void loadNews(RequestCallBack listener) { {
         /*
         new Handler().post(new Runnable() {
             @Override
@@ -55,7 +57,7 @@ public class NewsInteractorSample implements NewsInteractor{
                 .subscribe(new Observer<String>() {
                     @Override
                     public void onCompleted() {
-                        listener.onFinished(list);
+                        listener.(list);
                     }
 
                     @Override

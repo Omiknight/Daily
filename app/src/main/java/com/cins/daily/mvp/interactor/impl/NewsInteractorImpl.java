@@ -9,9 +9,13 @@ import com.cins.daily.mvp.entity.NewsSummary;
 import com.cins.daily.mvp.interactor.NewsInteractor;
 import com.cins.daily.repository.network.RetrofitManager;
 
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Date;
 import java.util.List;
+import java.util.Locale;
 import java.util.Map;
 
 import retrofit2.Retrofit;
@@ -51,6 +55,20 @@ public class NewsInteractorImpl implements NewsInteractor<List<NewsSummary>> {
                             return Observable.from(map.get("北京"));
                         }
                         return Observable.from(map.get(id));
+                    }
+                })
+                .map(new Func1<NewsSummary, NewsSummary>() {
+                    @Override
+                    public NewsSummary call(NewsSummary newsSummary) {
+                        try {
+                            Date data = new SimpleDateFormat("yyyy-MM-dd hh:mm:ss", Locale.getDefault())
+                                    .parse(newsSummary.getPtime());
+                            String ptime = new SimpleDateFormat("MM-dd hh:mm", Locale.getDefault()).format(data);
+                            newsSummary.setPtime(ptime);
+                        } catch (ParseException e) {
+                            e.printStackTrace();
+                        }
+                        return newsSummary;
                     }
                 })
                 .toSortedList(new Func2<NewsSummary, NewsSummary, Integer>() {

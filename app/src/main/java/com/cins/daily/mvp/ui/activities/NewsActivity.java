@@ -20,7 +20,9 @@ import android.view.MenuItem;
 import android.view.View;
 
 import com.cins.daily.R;
+import com.cins.daily.mvp.ui.activities.base.BaseActivity;
 import com.cins.daily.mvp.ui.fragment.NewsFragment;
+import com.cins.daily.utils.MyUtil;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -28,7 +30,7 @@ import java.util.List;
 import butterknife.BindView;
 import butterknife.ButterKnife;
 
-public class NewsActivity extends AppCompatActivity
+public class NewsActivity extends BaseActivity
         implements NavigationView.OnNavigationItemSelectedListener {
 
     @BindView(R.id.toolbar)
@@ -120,12 +122,7 @@ public class NewsActivity extends AppCompatActivity
         mNewsFragmentList.add(newsFragment1);
         mNewsFragmentList.add(newsFragment2);
         mNewsFragmentList.add(newsFragment3);
-
     }
-
-
-
-
 
 
     @Override
@@ -154,6 +151,14 @@ public class NewsActivity extends AppCompatActivity
 
         //noinspection SimplifiableIfStatement
         if (id == R.id.action_settings) {
+            if (MyUtil.isNightMode()) {
+                changeToDay();
+                MyUtil.saveTheme(false);
+            } else {
+                changeToNight();
+                MyUtil.saveTheme(true);
+            }
+            recreate();
             return true;
         }
 

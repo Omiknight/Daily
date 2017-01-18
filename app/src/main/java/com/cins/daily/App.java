@@ -28,8 +28,6 @@ public class App extends Application {
         return application.mRefWatcher;
     }
 
-
-
     public static Context getAppContext() {
         return sAppContext;
     }
@@ -37,7 +35,7 @@ public class App extends Application {
     @Override
     public void onCreate() {
         super.onCreate();
-        sAppContext = getApplicationContext();
+        sAppContext = this;
         if (MyUtils.isNightMode()) {
             AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_YES);
         } else {

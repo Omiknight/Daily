@@ -115,7 +115,9 @@ public class NewsListFragment extends BaseFragment implements NewsListView {
     @Override
     public void showErrorMsg(String message) {
         mProgressBar.setVisibility(View.GONE);
-        Snackbar.make(mNewsRv, message, Snackbar.LENGTH_LONG).show();
+        if (NetUtil.isNetworkAvailable(App.getAppContext())) {
+            Snackbar.make(mNewsRv, message, Snackbar.LENGTH_LONG).show();
+        }
     }
 
 

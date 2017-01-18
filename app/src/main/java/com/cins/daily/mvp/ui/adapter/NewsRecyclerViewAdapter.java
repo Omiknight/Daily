@@ -47,7 +47,7 @@ public class NewsRecyclerViewAdapter extends RecyclerView.Adapter<NewsRecyclerVi
         String imgSrc = mNewsSummaryList.get(position).getImgsrc();
 
         holder.mNewsSummaryTitleTv.setText(title);
-        holder.mEwsSummaryPtimeTv.setText(time);
+        holder.mNewsSummaryPtimeTv.setText(time);
         holder.mNewsSummaryDigestTv.setText(digest);
     }
 
@@ -66,7 +66,7 @@ public class NewsRecyclerViewAdapter extends RecyclerView.Adapter<NewsRecyclerVi
         @BindView(R.id.news_summary_digest_tv)
         TextView mNewsSummaryDigestTv;
         @BindView(R.id.news_summary_ptime_tv)
-        TextView mEwsSummaryPtimeTv;
+        TextView mNewsSummaryPtimeTv;
         public ViewHolder(View itemView) {
             super(itemView);
             ButterKnife.bind(this, itemView);

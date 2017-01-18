@@ -31,8 +31,19 @@ public class NewsDetailInteractorImpl implements NewsDetailInteractor<NewsDetail
                 .observeOn(AndroidSchedulers.mainThread())
                 .map(new Func1<Map<String,NewsDetail>, NewsDetail>() {
                     @Override
-                    public NewsDetail call(Map<String, NewsDetail> stringNewsDetailMap) {
-                        return stringNewsDetailMap.get(postId);
+                    public NewsDetail call(Map<String, NewsDetail> map) {
+                        NewsDetail newsDetail = map.get(postId);
+                        List<NewsDetail.ImgBean> imgSrcs = newsDetail.getImg();
+                        if (imgSrcs != null && imgSrcs.size() >= 2 && App.isHavePhoto()) {
+                            String newsBody = newsDetail.getBody();
+                            for (int i = 0; i < imgSrcs.size(); i++) {
+                                String oldChars = "<!--IMG#" + i + "-->";
+                                String newChars = "<img src=\"" + imgSrcs.get(i).getSrc() + "\" />";
+                                newsBody = newsBody.replace(oldChars, newChars);
+                            }
+                            newsDetail.setBody(newsBody);
+                        }
+                        return newsDetail;
                     }
                 })
                 .subscribe(new Observer<NewsDetail>() {

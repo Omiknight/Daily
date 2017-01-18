@@ -120,6 +120,7 @@ public class NewsListFragment extends BaseFragment implements NewsListView, OnIt
         mProgressBar.setVisibility(View.GONE);
     }
 
+
     @Override
     public void showErrorMsg(String message) {
         mProgressBar.setVisibility(View.GONE);

@@ -163,4 +163,9 @@ public class RetrofitManager {
 
         return mNewsService.getNewDetail(getCacheControl(), postId);
     }
+
+    public Observable<ResponseBody> getNewsBodyHtmlPhoto(String photoPath) {
+        return mNewsService.getNewsBodyHtmlPhoto(photoPath);
+    }
+
 }

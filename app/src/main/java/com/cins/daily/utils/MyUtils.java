@@ -56,6 +56,16 @@ public class MyUtils {
         return after;
     }
 
+    public static int getColor(int nightColor, int dayColor) {
+        int color;
+        if (!MyUtils.isNightMode()) {
+            color = nightColor;
+        } else {
+            color = dayColor;
+        }
+        return color;
+    }
+
     public static int getStatusBarHeight(Activity activity) {
         int height = 0;
         int resourceId = activity.getResources().getIdentifier("status_bar_height", "dimen",

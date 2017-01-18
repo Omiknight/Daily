@@ -8,8 +8,10 @@ import android.widget.ImageView;
 import android.widget.TextView;
 
 import com.bumptech.glide.Glide;
+import com.bumptech.glide.load.engine.DiskCacheStrategy;
 import com.cins.daily.App;
 import com.cins.daily.R;
+import com.cins.daily.listener.OnItemClickListener;
 import com.cins.daily.mvp.entity.NewsSummary;
 
 import java.util.List;
@@ -25,15 +27,31 @@ public class NewsRecyclerViewAdapter extends RecyclerView.Adapter<NewsRecyclerVi
 
     private List<NewsSummary> mNewsSummaryList;
 
+    private OnItemClickListener mOnItemClickListener;
+
+    public void setOnItemClickListener(OnItemClickListener onItemClickListener) {
+        mOnItemClickListener = onItemClickListener;
+    }
+
+    public List<NewsSummary> getNewsSummaryList() {
+        return mNewsSummaryList;
+    }
     public void setItems(List<NewsSummary> items) {
         this.mNewsSummaryList = items;
     }
 
     @Override
-    public ViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
+    public ViewHolder onCreateViewHolder(ViewGroup parent,final int viewType) {
         View view =
                 LayoutInflater.from(parent.getContext()).inflate(R.layout.item_news, parent, false);
-        return new ViewHolder(view);
+        final ViewHolder holder = new ViewHolder(view);
+        holder.itemView.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                mOnItemClickListener.onItemClick(holder.itemView,holder.getLayoutPosition());
+            }
+        });
+        return holder;
     }
 
     @Override
@@ -49,6 +67,12 @@ public class NewsRecyclerViewAdapter extends RecyclerView.Adapter<NewsRecyclerVi
         holder.mNewsSummaryTitleTv.setText(title);
         holder.mNewsSummaryPtimeTv.setText(time);
         holder.mNewsSummaryDigestTv.setText(digest);
+
+        Glide.with(App.getAppContext()).load(imgSrc)
+                .diskCacheStrategy(DiskCacheStrategy.ALL)
+//                .placeholder(R.mipmap.ic_loading)
+                .error(R.drawable.ic_load_fail)
+                .into(holder.mNewsSummaryPhotoIv);
     }
 
     @Override

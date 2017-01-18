@@ -1,10 +1,15 @@
 package com.cins.daily.mvp.presenter.impl;
 
+import android.content.Context;
+import android.content.Intent;
+
+import com.cins.daily.common.Constants;
 import com.cins.daily.listener.RequestCallBack;
 import com.cins.daily.mvp.entity.NewsSummary;
 import com.cins.daily.mvp.interactor.NewsListInteractor;
 import com.cins.daily.mvp.interactor.impl.NewsListInteractorImpl;
 import com.cins.daily.mvp.presenter.NewsListPresenter;
+import com.cins.daily.mvp.ui.activities.NewsDetailActivity;
 import com.cins.daily.mvp.view.NewsListView;
 
 import java.util.List;
@@ -44,7 +49,7 @@ public class NewsListPresenterImpl extends BasePresenterImpl<NewsListView,List<N
     public void success(List<NewsSummary> items) {
         mIsLoaded = true;
         if (mView != null) {
-            mView.setItems(items);
+            mView.setNewsList(items);
             mView.hideProgress();
         }
     }
@@ -54,10 +59,6 @@ public class NewsListPresenterImpl extends BasePresenterImpl<NewsListView,List<N
         mView.showErrorMsg(errorMsg);
     }
 
-    @Override
-    public void onItemClicked(int position) {
-
-    }
 
     @Override
     public void onDestroy() {

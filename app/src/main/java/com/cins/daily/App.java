@@ -3,6 +3,7 @@ package com.cins.daily;
 import android.app.Application;
 import android.content.Context;
 import android.database.sqlite.SQLiteDatabase;
+import android.os.StrictMode;
 import android.support.v7.app.AppCompatDelegate;
 
 import com.cins.daily.common.Constants;
@@ -36,13 +37,36 @@ public class App extends Application {
     public void onCreate() {
         super.onCreate();
         sAppContext = this;
+        initDayNightMode();
+        initStrictMode();
+        // 官方推荐将获取 DaoMaster 对象的方法放到 Application 层，这样将避免多次创建生成 Session 对象
+        setupDatabase();
+    }
+
+    private void initStrictMode() {
+        if (BuildConfig.DEBUG) {
+            StrictMode.setThreadPolicy(
+                    new StrictMode.ThreadPolicy.Builder()
+                            .detectAll()
+                            .penaltyLog()
+                            .build()
+            );
+            StrictMode.setVmPolicy(
+                    new StrictMode.VmPolicy.Builder()
+                    .detectAll()
+                    .penaltyLog()
+                    .build()
+            );
+        }
+
+    }
+
+    private void initDayNightMode() {
         if (MyUtils.isNightMode()) {
             AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_YES);
         } else {
             AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_NO);
         }
-        // 官方推荐将获取 DaoMaster 对象的方法放到 Application 层，这样将避免多次创建生成 Session 对象
-        setupDatabase();
     }
 
     public static NewsChannelTableDao getNewsChannelTableDao() {

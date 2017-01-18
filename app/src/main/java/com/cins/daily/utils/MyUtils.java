@@ -7,6 +7,12 @@ import android.content.SharedPreferences;
 
 import com.cins.daily.App;
 import com.cins.daily.common.Constants;
+import com.socks.library.KLog;
+
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
+import java.util.Date;
+import java.util.Locale;
 
 /**
  * Created by Eric on 2017/1/17.
@@ -17,7 +23,7 @@ public class MyUtils {
         SharedPreferences preferences = App.getAppContext().getSharedPreferences(
                 Constants.SHARES_COLOURFUL_NEWS, Activity.MODE_PRIVATE
         );
-        return preferences.getBoolean(Constants.NIGHT_THEME_MODE,false);
+        return preferences.getBoolean(Constants.NIGHT_THEME_MODE, false);
     }
 
     public static void saveTheme(boolean isNight) {
@@ -32,5 +38,31 @@ public class MyUtils {
     public static SharedPreferences getSharedPreferences() {
         return App.getAppContext()
                 .getSharedPreferences(Constants.SHARES_COLOURFUL_NEWS, Context.MODE_PRIVATE);
+    }
+
+    /**
+     * from yyyy-MM-dd HH:mm:ss to MM-dd HH:mm
+     */
+    public static String formatDate(String before) {
+        String after;
+        try {
+            Date date = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss", Locale.getDefault())
+                    .parse(before);
+            after = new SimpleDateFormat("MM-dd HH:mm", Locale.getDefault()).format(date);
+        } catch (ParseException e) {
+            KLog.e("转换新闻日期格式异常：" + e.toString());
+            return before;
+        }
+        return after;
+    }
+
+    public static int getStatusBarHeight(Activity activity) {
+        int height = 0;
+        int resourceId = activity.getResources().getIdentifier("status_bar_height", "dimen",
+                "android");
+        if (resourceId > 0) {
+            height = activity.getResources().getDimensionPixelSize(resourceId);
+        }
+        return height;
     }
 }

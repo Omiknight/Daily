@@ -18,12 +18,15 @@ import android.view.MenuItem;
 import android.view.View;
 
 import com.cins.daily.R;
+import com.cins.daily.mvp.presenter.NewsPresenter;
 import com.cins.daily.mvp.ui.activities.base.BaseActivity;
 import com.cins.daily.mvp.ui.fragment.NewsListFragment;
 import com.cins.daily.utils.MyUtils;
 
 import java.util.ArrayList;
 import java.util.List;
+
+import javax.inject.Inject;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
@@ -44,7 +47,10 @@ public class NewsActivity extends BaseActivity
     @BindView(R.id.drawer_layout)
     DrawerLayout mDrawerLayout;
 
-    private List<Fragment> mNewsFragmentList;
+    @Inject
+    NewsPresenter mNewsPresenter;
+
+    private List<Fragment> mNewsFragmentList = new ArrayList<>();
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -52,6 +58,7 @@ public class NewsActivity extends BaseActivity
         setContentView(R.layout.activity_news);
         ButterKnife.bind(this);
         setSupportActionBar(mToolbar);
+        setStatusBarTranslucent();
 
         mFab.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -68,6 +75,8 @@ public class NewsActivity extends BaseActivity
 
         mNavView.setNavigationItemSelectedListener(this);
 
+        mPresenter = mNewsPresenter;
+        mPresenter.onCreate();
         initViewPager();
     }
 

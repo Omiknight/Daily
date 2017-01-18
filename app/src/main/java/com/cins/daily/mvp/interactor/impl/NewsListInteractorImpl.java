@@ -58,36 +58,12 @@ public class NewsListInteractorImpl implements NewsListInteractor<List<NewsSumma
                 .map(new Func1<NewsSummary, NewsSummary>() {
                     @Override
                     public NewsSummary call(NewsSummary newsSummary) {
-                        try {
-                            Date date = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss", Locale.getDefault()).parse(newsSummary.getPtime());
-                            String ptime = new SimpleDateFormat("MM-dd HH:mm", Locale.getDefault()).format(date);
-                            newsSummary.setPtime(ptime);
-                        } catch (ParseException e) {
-
-                        }
+                        String ptime = MyUtils.formatDate(newsSummary.getPtime())
+                        newsSummary.setPtime(ptime);
                         return newsSummary;
                     }
                 })
-                .map(new Func1<NewsSummary, NewsSummary>() {
-                    @Override
-                    public NewsSummary call(NewsSummary newsSummary) {
-                        try {
-                            Date date = new SimpleDateFormat("yyyy-MM-dd hh:mm:ss", Locale.getDefault())
-                                    .parse(newsSummary.getPtime());
-                            String ptime = new SimpleDateFormat("MM-dd hh:mm", Locale.getDefault()).format(date);
-                            newsSummary.setPtime(ptime);
-                        } catch (ParseException e) {
-                            KLog.e("转换新闻日期格式异常：" + e.toString());
-                        }
-                        return newsSummary;
-                    }
-                })
-                .toSortedList(new Func2<NewsSummary, NewsSummary, Integer>() {
-                    @Override
-                    public Integer call(NewsSummary newsSummary, NewsSummary newsSummary2) {
-                        return newsSummary2.getPtime().compareTo(newsSummary.getPtime());
-                    }
-                })
+                .toList()
                 .subscribe(new Subscriber<List<NewsSummary>>() {
                     @Override
                     public void onCompleted() {
@@ -99,9 +75,9 @@ public class NewsListInteractorImpl implements NewsListInteractor<List<NewsSumma
                     public void onError(Throwable e) {
                         KLog.e(e.toString());
 //                        checkNetState(listener);
-                        if (!NetUtil.isNetworkAvailable(App.getAppContext())) {
+//                        if (!NetUtil.isNetworkAvailable(App.getAppContext())) {
                            listener.onError(App.getAppContext().getString(R.string.load_error));
-                       }
+
                     }
 
                     @Override

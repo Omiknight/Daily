@@ -14,6 +14,7 @@ import android.widget.Toast;
 import com.cins.daily.App;
 import com.cins.daily.R;
 import com.cins.daily.common.Constants;
+import com.cins.daily.listener.OnItemClickListener;
 import com.cins.daily.module.NewsListModule;
 import com.cins.daily.mvp.entity.NewsSummary;
 import com.cins.daily.mvp.presenter.NewsListPresenter;
@@ -33,7 +34,7 @@ import butterknife.ButterKnife;
  * Created by Eric on 2017/1/16.
  */
 
-public class NewsListFragment extends BaseFragment implements NewsListView {
+public class NewsListFragment extends BaseFragment implements NewsListView,OnItemClickListener {
 
     @BindView(R.id.news_rv)
     RecyclerView mNewsRv;
@@ -74,6 +75,7 @@ public class NewsListFragment extends BaseFragment implements NewsListView {
                 .build()
                 .inject(this);
         mNewsListPresenter.onCreate();
+        mNewsRecyclerViewAdapter.set
         checkNetState();
         return view;
     }
@@ -96,11 +98,6 @@ public class NewsListFragment extends BaseFragment implements NewsListView {
         super.onResume();
     }
 
-    @Override
-    public void setItems(List<NewsSummary> items) {
-        mNewsRecyclerViewAdapter.setItems(items);
-        mNewsRv.setAdapter(mNewsRecyclerViewAdapter);
-    }
 
     @Override
     public void showProgress() {
@@ -125,5 +122,18 @@ public class NewsListFragment extends BaseFragment implements NewsListView {
     public void onDestroyView() {
         mNewsListPresenter.onDestroy();
         super.onDestroyView();
+    }
+
+    @Override
+    public void onItemClick(View view, int position) {
+        List<NewsSummary> newsSummaryList = mNewsRecyclerViewAdapter.getNewsSummaryList();
+        mNewsListPresenter.onItemClicked(getActivity(),newsSummaryList.get(position).getPostid(),
+                newsSummaryList.get(position).getImgsrc());
+    }
+
+    @Override
+    public void setNewsList(List<NewsSummary> newsSummary) {
+        mNewsRecyclerViewAdapter.setItems(newsSummary);
+        mNewsRv.setAdapter(mNewsRecyclerViewAdapter);
     }
 }

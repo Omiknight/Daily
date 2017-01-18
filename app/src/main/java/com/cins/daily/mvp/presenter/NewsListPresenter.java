@@ -1,5 +1,7 @@
 package com.cins.daily.mvp.presenter;
 
+import android.content.Context;
+
 import com.cins.daily.mvp.presenter.base.BasePresenter;
 
 /**
@@ -7,5 +9,5 @@ import com.cins.daily.mvp.presenter.base.BasePresenter;
  */
 
 public interface NewsListPresenter extends BasePresenter{
-    void onItemClicked(int position);
+    void onItemClicked(Context context, String postId, String imgSrc);
 }

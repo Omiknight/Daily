@@ -1,5 +1,6 @@
 package com.cins.daily.mvp.view;
 
+import com.cins.daily.common.LoadNewsType;
 import com.cins.daily.mvp.entity.NewsSummary;
 import com.cins.daily.mvp.view.base.BaseView;
 
@@ -10,5 +11,7 @@ import java.util.List;
  */
 
 public interface NewsListView extends BaseView {
-    void setItems(List<NewsSummary> items);
+
+    void setNewsList(List<NewsSummary> newsSummary);
+
 }

@@ -1,5 +1,6 @@
 package com.cins.daily.repository.network;
 
+import com.cins.daily.mvp.entity.NewsDetail;
 import com.cins.daily.mvp.entity.NewsSummary;
 
 import java.util.List;
@@ -23,4 +24,9 @@ public interface NewsService {
             @Path("startPage") int startPage
     );
 
+    @GET("nc/article/{postId}/full.html")
+    Observable<Map<String, NewsDetail>> getNewDetail(
+            @Header("Cache-Control") String cacheControl,
+            @Path("postId") String postId
+    );
 }

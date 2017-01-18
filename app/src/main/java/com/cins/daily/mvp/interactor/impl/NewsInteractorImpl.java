@@ -50,6 +50,7 @@ public class NewsInteractorImpl implements NewsInteractor<List<NewsChannelTable>
                 subscriber.onCompleted();
             }
         })
+                .unsubscribeOn(Schedulers.io())
                 .subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribe(new Subscriber<List<NewsChannelTable>>() {

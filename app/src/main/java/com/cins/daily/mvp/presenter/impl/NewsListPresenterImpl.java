@@ -13,9 +13,9 @@ import java.util.List;
  * Created by Eric on 2017/1/17.
  */
 
-public class NewsListPresenterImpl implements NewsListPresenter,RequestCallBack<List<NewsSummary>>{
+public class NewsListPresenterImpl extends BasePresenterImpl<NewsListView,List<NewsSummary>>
+        implements NewsListPresenter,RequestCallBack<List<NewsSummary>>{
 
-    private NewsListView mNewsListView;
     private NewsListInteractor<List<NewsSummary>> mNewsListInteractor;
     private String mNewsType;
     private String mNewsId;
@@ -27,7 +27,7 @@ public class NewsListPresenterImpl implements NewsListPresenter,RequestCallBack<
     private boolean mIsLoaded;
 
     public NewsListPresenterImpl(NewsListView newsListView, String newsType, String newsId) {
-        mNewsListView = newsListView;
+        mView = newsListView;
         mNewsType = newsType;
         mNewsId = newsId;
         mNewsListInteractor = new NewsListInteractorImpl();
@@ -35,7 +35,7 @@ public class NewsListPresenterImpl implements NewsListPresenter,RequestCallBack<
 
     @Override
     public void onCreate() {
-        if (mNewsListView != null) {
+        if (mView != null) {
             mNewsListInteractor.loadNews(this, mNewsType, mNewsType, mStartPage);
         }
     }
@@ -43,15 +43,15 @@ public class NewsListPresenterImpl implements NewsListPresenter,RequestCallBack<
     @Override
     public void success(List<NewsSummary> items) {
         mIsLoaded = true;
-        if (mNewsListView != null) {
-            mNewsListView.setItems(items);
-            mNewsListView.hideProgress();
+        if (mView != null) {
+            mView.setItems(items);
+            mView.hideProgress();
         }
     }
 
     @Override
     public void onError(String errorMsg) {
-        mNewsListView.showErrorMsg(errorMsg);
+        mView.showErrorMsg(errorMsg);
     }
 
     @Override
@@ -61,6 +61,6 @@ public class NewsListPresenterImpl implements NewsListPresenter,RequestCallBack<
 
     @Override
     public void onDestroy() {
-        mNewsListView = null;
+        mView = null;
     }
 }

@@ -1,6 +1,6 @@
-package com.cins.daily.component;
+package com.cins.daily.di.component;
 
-import com.cins.daily.module.NewsModule;
+import com.cins.daily.di.module.NewsModule;
 import com.cins.daily.mvp.ui.activities.NewsActivity;
 
 import dagger.Component;

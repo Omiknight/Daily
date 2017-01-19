@@ -21,9 +21,9 @@ import android.widget.Toast;
 import com.cins.daily.App;
 import com.cins.daily.R;
 import com.cins.daily.common.Constants;
-import com.cins.daily.component.DaggerNewsComponent;
+import com.cins.daily.di.component.DaggerNewsComponent;
 import com.cins.daily.listener.OnItemClickListener;
-import com.cins.daily.module.NewsListModule;
+import com.cins.daily.di.module.NewsListModule;
 import com.cins.daily.mvp.entity.NewsSummary;
 import com.cins.daily.mvp.presenter.NewsListPresenter;
 import com.cins.daily.mvp.ui.activities.NewsDetailActivity;
@@ -38,8 +38,6 @@ import javax.inject.Inject;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
-
-import static com.cins.daily.component.DaggerNewsComponent.builder;
 
 /**
  * Created by Eric on 2017/1/16.

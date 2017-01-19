@@ -1,6 +1,6 @@
-package com.cins.daily.component;
+package com.cins.daily.di.component;
 
-import com.cins.daily.module.NewsListModule;
+import com.cins.daily.di.module.NewsListModule;
 import com.cins.daily.mvp.ui.fragment.NewsListFragment;
 
 import dagger.Component;

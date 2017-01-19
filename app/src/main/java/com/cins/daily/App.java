@@ -7,6 +7,7 @@ import android.os.StrictMode;
 import android.support.v7.app.AppCompatDelegate;
 
 import com.cins.daily.common.Constants;
+import com.cins.daily.di.component.AppComponent;
 import com.cins.daily.greendao.DaoMaster;
 import com.cins.daily.greendao.DaoSession;
 import com.cins.daily.greendao.NewsChannelTableDao;
@@ -24,6 +25,7 @@ public class App extends Application {
     private RefWatcher mRefWatcher;
     private static Context sAppContext;
     private static DaoSession mDaoSession;
+    private AppComponent mAppComponent;
 
     public static RefWatcher getRefWatcher(Context context) {
         App application = (App) context.getApplicationContext();
@@ -43,8 +45,19 @@ public class App extends Application {
         initStrictMode();
         // 官方推荐将获取 DaoMaster 对象的方法放到 Application 层，这样将避免多次创建生成 Session 对象
         setupDatabase();
+        setupAppComponent();
     }
 
+    private void setupAppComponent() {
+        mAppComponent = DaggerAppComponent.builder()
+                .appModule(new AppModule(this))
+                .build();
+        mAppComponent.inject(this);
+    }
+
+    public AppComponent getAppCoponent() {
+        return mAppComponent;
+    }
     private void initLeakCanary() {
         if (BuildConfig.DEBUG) {
             mRefWatcher = LeakCanary.install(this);

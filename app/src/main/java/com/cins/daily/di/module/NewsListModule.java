@@ -1,4 +1,4 @@
-package com.cins.daily.module;
+package com.cins.daily.di.module;
 
 import com.cins.daily.mvp.presenter.NewsListPresenter;
 import com.cins.daily.mvp.presenter.impl.NewsListPresenterImpl;

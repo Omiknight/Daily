@@ -8,6 +8,7 @@ import android.support.v7.app.AppCompatDelegate;
 
 import com.cins.daily.common.Constants;
 import com.cins.daily.di.component.AppComponent;
+import com.cins.daily.di.component.DaggerNewsComponent;
 import com.cins.daily.greendao.DaoMaster;
 import com.cins.daily.greendao.DaoSession;
 import com.cins.daily.greendao.NewsChannelTableDao;
@@ -25,7 +26,7 @@ public class App extends Application {
     private RefWatcher mRefWatcher;
     private static Context sAppContext;
     private static DaoSession mDaoSession;
-    private AppComponent mAppComponent;
+    private static AppComponent mAppComponent;
 
     public static RefWatcher getRefWatcher(Context context) {
         App application = (App) context.getApplicationContext();
@@ -49,13 +50,13 @@ public class App extends Application {
     }
 
     private void setupAppComponent() {
-        mAppComponent = DaggerAppComponent.builder()
+        mAppComponent = DaggerNewsComponent.builder()
                 .appModule(new AppModule(this))
                 .build();
         mAppComponent.inject(this);
     }
 
-    public AppComponent getAppCoponent() {
+    public static AppComponent getAppComponent() {
         return mAppComponent;
     }
     private void initLeakCanary() {

@@ -13,6 +13,7 @@ import android.view.WindowManager;
 
 import com.cins.daily.App;
 import com.cins.daily.R;
+import com.cins.daily.di.module.ActivityModule;
 import com.cins.daily.mvp.presenter.base.BasePresenter;
 import com.cins.daily.utils.MyUtils;
 import com.squareup.leakcanary.RefWatcher;
@@ -30,6 +31,9 @@ public class BaseActivity<T extends BasePresenter> extends AppCompatActivity {
     private boolean mIsAddedView;
     protected T mPresenter;
 
+    protected ActivityModule getActivityModule() {
+        return new ActivityModule(this);
+    }
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);

@@ -177,4 +177,9 @@ public class NewsListFragment extends BaseFragment implements NewsListView, OnIt
 
         }
     }
+
+    @Override
+    public void setNewsList(List<NewsSummary> newsSummary) {
+
+    }
 }

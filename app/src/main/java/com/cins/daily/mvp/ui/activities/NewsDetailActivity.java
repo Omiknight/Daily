@@ -1,5 +1,6 @@
 package com.cins.daily.mvp.ui.activities;
 
+import android.graphics.Bitmap;
 import android.graphics.Color;
 import android.os.Bundle;
 import android.support.design.widget.AppBarLayout;
@@ -16,7 +17,10 @@ import android.widget.ProgressBar;
 import android.widget.TextView;
 
 import com.bumptech.glide.Glide;
+import com.bumptech.glide.load.DecodeFormat;
 import com.bumptech.glide.load.engine.DiskCacheStrategy;
+import com.bumptech.glide.request.animation.GlideAnimation;
+import com.bumptech.glide.request.target.SimpleTarget;
 import com.cins.daily.App;
 import com.cins.daily.R;
 import com.cins.daily.common.Constants;
@@ -28,6 +32,7 @@ import com.cins.daily.mvp.ui.activities.base.BaseActivity;
 import com.cins.daily.mvp.view.NewsDetailView;
 import com.cins.daily.utils.MyUtils;
 import com.cins.daily.widget.URLImageGetter;
+import com.socks.library.KLog;
 
 import java.util.List;
 
@@ -63,11 +68,13 @@ public class NewsDetailActivity extends BaseActivity implements NewsDetailView {
 
     @Inject
     NewsDetailPresenter mNewsDetailPresenter;
+    URLImageGetter mURLImageGetter;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_news_detail);
+        ButterKnife.bind(this);
         init();
         setSupportActionBar(mToolbar);
     }
@@ -89,6 +96,53 @@ public class NewsDetailActivity extends BaseActivity implements NewsDetailView {
         String newsTitle = newsDetail.getTitle();
         String newsSource = newsDetail.getSource();
 
+        String newsTime = MyUtils.formatDate(newsDetail.getPtime());
+        String newsBody = newsDetail.getBody();
+        String NewsImgSrc = getImgSrcs(newsDetail);
+
+        setToolBarLayout(newsTitle);
+
+        mNewsDetailFromTv.setText(getString(R.string.news_from, newsSource, newsTime));
+
+        setNewsDetailPhotoIv(NewsImgSrc);
+        setNewsDetailBodyTv(newsDetail,newsBody);
+
+    }
+
+    private void setToolBarLayout(String newsTitle) {
+        mToolbarLayout.setTitle(newsTitle);
+        mToolbarLayout.setExpandedTitleColor(ContextCompat.getColor(this, R.color.colorPrimary));
+        mToolbarLayout.setCollapsedTitleTextColor(ContextCompat.getColor(this, R.color.primary_text_white));
+    }
+
+    private void setNewsDetailPhotoIv(String imgSrc) {
+        Glide.with(this).load(imgSrc).asBitmap()
+                .format(DecodeFormat.PREFER_ARGB_8888)
+                .diskCacheStrategy(DiskCacheStrategy.ALL)
+                .error(R.drawable.ic_load_fail)
+                .into(new SimpleTarget<Bitmap>() {
+                    @Override
+                    public void onResourceReady(Bitmap resource, GlideAnimation<? super Bitmap> glideAnimation) {
+                        mNewsDetailPhotoIv.setImageBitmap(resource);
+                        mMaskView.setVisibility(View.VISIBLE);
+                    }
+                });
+    }
+    private void setNewsDetailBodyTv(NewsDetail newsDetail, String newsBody) {
+        if (mNewsDetailBodyTv != null) {
+            int imgTotal = newsDetail.getImg().size();
+            if (App.isHavePhoto() &&  imgTotal>= 2) {
+//                mNewsDetailBodyTv.setMovementMethod(LinkMovementMethod.getInstance());//加这句才能让里面的超链接生效,实测经常卡机崩溃
+
+                mURLImageGetter = new URLImageGetter(mNewsDetailBodyTv, newsBody, imgTotal);
+                mNewsDetailBodyTv.setText(Html.fromHtml(newsBody, mURLImageGetter, null));
+            } else {
+                mNewsDetailBodyTv.setText(Html.fromHtml(newsBody));
+            }
+        }
+    }
+
+    private String getImgSrcs(NewsDetail newsDetail) {
         List<NewsDetail.ImgBean> imgSrcs = newsDetail.getImg();
         String imgSrc;
         if (imgSrcs != null && imgSrcs.size() > 0) {
@@ -96,33 +150,8 @@ public class NewsDetailActivity extends BaseActivity implements NewsDetailView {
         } else {
             imgSrc = getIntent().getStringExtra(Constants.NEWS_IMG_RES);
         }
-
-        String newsTime = MyUtils.formatDate(newsDetail.getPtime());
-        String newsBody = newsDetail.getBody();
-
-        mNewsDetailFromTv.setText(getString(R.string.news_from, newsSource, newsTime));
-
-        Glide.with(this).load(imgSrc).asBitmap()
-                .diskCacheStrategy(DiskCacheStrategy.ALL)
-                .error(R.drawable.ic_load_fail)
-                .into(mNewsDetailPhotoIv);
-
-        if (mNewsDetailBodyTv != null) {
-            if (App.isHavePhoto() && newsDetail.getImg().size() >= 2) {
-//                mNewsDetailBodyTv.setMovementMethod(LinkMovementMethod.getInstance());//加这句才能让里面的超链接生效,实测经常卡机崩溃
-                int total = newsDetail.getImg().size();
-                URLImageGetter urlImageGetter = new URLImageGetter(mNewsDetailBodyTv, newsBody, total);
-                mNewsDetailBodyTv.setText(Html.fromHtml(newsBody, urlImageGetter, null));
-            } else {
-                mNewsDetailBodyTv.setText(Html.fromHtml(newsBody));
-            }
-        }
-
-        mToolbarLayout.setTitle(newsTitle);
-        mToolbarLayout.setExpandedTitleColor(ContextCompat.getColor(this, R.color.colorPrimary));
-        mToolbarLayout.setCollapsedTitleTextColor(ContextCompat.getColor(this, R.color.primary_text_white));
+        return imgSrc;
     }
-
     @Override
     public void showProgress() {
         mProgressBar.setVisibility(View.VISIBLE);
@@ -136,5 +165,23 @@ public class NewsDetailActivity extends BaseActivity implements NewsDetailView {
     @Override
     public void showErrorMsg(String message) {
         mProgressBar.setVisibility(View.GONE);
+    }
+
+    @Override
+    protected void onDestroy() {
+        cancelUrlImageGetterSubscription();
+        super.onDestroy();
+    }
+
+    private void cancelUrlImageGetterSubscription() {
+        try {
+            if (mURLImageGetter != null && mURLImageGetter.mSubscription != null
+                    && !mURLImageGetter.mSubscription.isUnsubscribed()) {
+                mURLImageGetter.mSubscription.unsubscribe();
+                KLog.d("UrlImageGetter unsubscribe");
+            }
+        } catch (Exception e) {
+            KLog.e("取消UrlImageGetter Subscription 出现异常： " + e.toString());
+        }
     }
 }

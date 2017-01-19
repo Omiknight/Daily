@@ -4,21 +4,24 @@ import com.cins.daily.mvp.entity.NewsDetail;
 import com.cins.daily.mvp.interactor.NewsDetailInteractor;
 import com.cins.daily.mvp.interactor.impl.NewsDetailInteractorImpl;
 import com.cins.daily.mvp.presenter.NewsDetailPresenter;
+import com.cins.daily.mvp.presenter.base.BasePresenterImpl;
 import com.cins.daily.mvp.view.NewsDetailView;
+
+import javax.inject.Inject;
 
 /**
  * Created by Eric on 2017/1/18.
  */
 
 public class NewsDetailPresenterImpl extends BasePresenterImpl<NewsDetailView, NewsDetail>
-        implements NewsDetailPresenter{
+        implements NewsDetailPresenter {
+
     private NewsDetailInteractor<NewsDetail> mNewsDetailInteractor;
     private String mPostId;
 
-    public NewsDetailPresenterImpl(NewsDetailView newsDetailView, String postId) {
-        mView = newsDetailView;
-        mPostId = postId;
-        mNewsDetailInteractor = new NewsDetailInteractorImpl();
+    @Inject
+    public NewsDetailPresenterImpl(NewsDetailInteractorImpl newsDetailInteractor) {
+        mNewsDetailInteractor = newsDetailInteractor;
     }
 
     @Override
@@ -35,6 +38,6 @@ public class NewsDetailPresenterImpl extends BasePresenterImpl<NewsDetailView, N
 
     @Override
     public void setPosId(String postId) {
-
+        mPostId = postId;
     }
 }

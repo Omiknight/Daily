@@ -1,6 +1,10 @@
 package com.cins.daily.di.module;
 
 import android.app.Activity;
+import android.content.Context;
+
+import com.cins.daily.di.scope.ContextLife;
+import com.cins.daily.di.scope.PerActivity;
 
 import dagger.Module;
 import dagger.Provides;
@@ -17,6 +21,14 @@ public class ActivityModule {
     }
 
     @Provides
+    @PerActivity
+    @ContextLife("Activity")
+    public Context ProvideActivityContext() {
+        return mActivity;
+    }
+
+    @Provides
+    @PerActivity
     public Activity ProvideActivity() {
         return mActivity;
     }

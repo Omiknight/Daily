@@ -1,7 +1,8 @@
-package com.cins.daily.mvp.presenter.impl;
+package com.cins.daily.mvp.presenter.base;
+
+import android.support.annotation.NonNull;
 
 import com.cins.daily.listener.RequestCallBack;
-import com.cins.daily.mvp.presenter.base.BasePresenter;
 import com.cins.daily.mvp.view.base.BaseView;
 
 import rx.Subscription;
@@ -18,6 +19,11 @@ public class BasePresenterImpl<T extends BaseView, E> implements BasePresenter ,
     @Override
     public void onCreate() {
 
+    }
+
+    @Override
+    public void attachView(@NonNull BaseView view) {
+        mView = (T) view;
     }
 
     @Override

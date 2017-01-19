@@ -13,6 +13,7 @@ import android.view.WindowManager;
 
 import com.cins.daily.App;
 import com.cins.daily.R;
+import com.cins.daily.di.component.ActivityComponent;
 import com.cins.daily.di.module.ActivityModule;
 import com.cins.daily.mvp.presenter.base.BasePresenter;
 import com.cins.daily.utils.MyUtils;
@@ -23,13 +24,22 @@ import com.squareup.leakcanary.RefWatcher;
  * Created by Eric on 2017/1/16.
  */
 
-public class BaseActivity<T extends BasePresenter> extends AppCompatActivity {
-    private static final String LOG_TAG = "BaseActivity";
+public abstract class BaseActivity<T extends BasePresenter> extends AppCompatActivity {
 
+    protected ActivityComponent mActivityComponent;
+
+    public ActivityComponent getActivityComponent() {
+        return mActivityComponent;
+    }
+    private static final String LOG_TAG = "BaseActivity";
     private WindowManager mWindowManager = null;
     private View mNightView = null;
     private boolean mIsAddedView;
     protected T mPresenter;
+
+    public abstract int getLayoutId();
+    public abstract void initInjector();
+    public abstract void initViews();
 
     protected ActivityModule getActivityModule() {
         return new ActivityModule(this);
@@ -39,6 +49,10 @@ public class BaseActivity<T extends BasePresenter> extends AppCompatActivity {
         super.onCreate(savedInstanceState);
 
         setNightOrDayMode();
+        int layoutId = getLayoutId();
+        setContentView(layoutId);
+        initInjector();
+        initViews();
     }
 
     private void setNightOrDayMode() {

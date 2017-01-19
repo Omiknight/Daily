@@ -17,6 +17,8 @@ import com.cins.daily.mvp.entity.NewsSummary;
 
 import java.util.List;
 
+import javax.inject.Inject;
+
 import butterknife.BindView;
 import butterknife.ButterKnife;
 
@@ -27,8 +29,12 @@ import butterknife.ButterKnife;
 public class NewsRecyclerViewAdapter extends RecyclerView.Adapter<NewsRecyclerViewAdapter.ViewHolder> {
 
     private List<NewsSummary> mNewsSummaryList;
-
     private OnItemClickListener mOnItemClickListener;
+
+    @Inject
+    public NewsRecyclerViewAdapter() {
+
+    }
 
     public void setOnItemClickListener(OnItemClickListener onItemClickListener) {
         mOnItemClickListener = onItemClickListener;

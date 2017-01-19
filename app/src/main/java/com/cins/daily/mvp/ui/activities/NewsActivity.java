@@ -23,6 +23,7 @@ import com.cins.daily.di.component.DaggerNewsComponent;
 import com.cins.daily.di.module.NewsModule;
 import com.cins.daily.greendao.NewsChannelTable;
 import com.cins.daily.mvp.presenter.NewsPresenter;
+import com.cins.daily.mvp.presenter.impl.NewsPresenterImpl;
 import com.cins.daily.mvp.ui.activities.base.BaseActivity;
 import com.cins.daily.mvp.ui.fragment.NewsListFragment;
 import com.cins.daily.utils.MyUtils;
@@ -53,7 +54,7 @@ public class NewsActivity extends BaseActivity
     DrawerLayout mDrawerLayout;
 
     @Inject
-    NewsPresenter mNewsPresenter;
+    NewsPresenterImpl mNewsPresenter;
 
     private List<Fragment> mNewsFragmentList = new ArrayList<>();
 
@@ -111,7 +112,6 @@ public class NewsActivity extends BaseActivity
         if (newsChannels != null) {
             setNewsList(newsChannels, channelNames);
         }
-        initFragment();
         //setting the mode of TabLayout
         mTabs.setTabMode(TabLayout.MODE_FIXED);
         //add the name of tab to TabLayout

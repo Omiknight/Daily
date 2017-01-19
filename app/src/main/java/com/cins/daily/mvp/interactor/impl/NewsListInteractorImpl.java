@@ -19,6 +19,8 @@ import java.util.List;
 import java.util.Locale;
 import java.util.Map;
 
+import javax.inject.Inject;
+
 import rx.Observable;
 import rx.Subscriber;
 import rx.Subscription;
@@ -32,7 +34,11 @@ import rx.schedulers.Schedulers;
  */
 
 public class NewsListInteractorImpl implements NewsListInteractor<List<NewsSummary>> {
-//    private boolean mIsNetError;
+
+    //    private boolean mIsNetError;
+    @Inject
+    public NewsListInteractorImpl() {
+    }
 
     @Override
     public Subscription loadNews(final RequestCallBack<List<NewsSummary>> listener, String type,
@@ -41,7 +47,7 @@ public class NewsListInteractorImpl implements NewsListInteractor<List<NewsSumma
         // 对API调用了observeOn(MainThread)之后，线程会跑在主线程上，包括onComplete也是，
         // unsubscribe也在主线程，然后如果这时候调用call.cancel会导致NetworkOnMainThreadException
         // 加一句unsubscribeOn(io)
-        return  RetrofitManager.getInstance(HostType.NETEASE_NEWS_VIDEO).getNewsListObservable(type, id, startPage)
+        return RetrofitManager.getInstance(HostType.NETEASE_NEWS_VIDEO).getNewsListObservable(type, id, startPage)
                 .subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread())
                 .unsubscribeOn(Schedulers.io())
@@ -76,7 +82,7 @@ public class NewsListInteractorImpl implements NewsListInteractor<List<NewsSumma
                         KLog.e(e.toString());
 //                        checkNetState(listener);
 //                        if (!NetUtil.isNetworkAvailable(App.getAppContext())) {
-                           listener.onError(App.getAppContext().getString(R.string.load_error));
+                        listener.onError(App.getAppContext().getString(R.string.load_error));
 
                     }
 

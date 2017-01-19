@@ -7,5 +7,5 @@ import com.cins.daily.mvp.presenter.base.BasePresenter;
  */
 
 public interface NewsListPresenter extends BasePresenter{
-
+    void setNewsTypeAndId(String newsType, String newsId);
 }

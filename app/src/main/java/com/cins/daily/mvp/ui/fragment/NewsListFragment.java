@@ -2,6 +2,7 @@ package com.cins.daily.mvp.ui.fragment;
 
 import android.annotation.TargetApi;
 import android.app.ActivityOptions;
+import android.content.Context;
 import android.content.Intent;
 import android.os.Build;
 import android.os.Bundle;
@@ -22,10 +23,13 @@ import com.cins.daily.App;
 import com.cins.daily.R;
 import com.cins.daily.common.Constants;
 import com.cins.daily.di.component.DaggerNewsComponent;
+import com.cins.daily.di.scope.ContextLife;
 import com.cins.daily.listener.OnItemClickListener;
 import com.cins.daily.di.module.NewsListModule;
 import com.cins.daily.mvp.entity.NewsSummary;
 import com.cins.daily.mvp.presenter.NewsListPresenter;
+import com.cins.daily.mvp.presenter.impl.NewsListPresenterImpl;
+import com.cins.daily.mvp.presenter.impl.NewsPresenterImpl;
 import com.cins.daily.mvp.ui.activities.NewsDetailActivity;
 import com.cins.daily.mvp.ui.adapter.NewsRecyclerViewAdapter;
 import com.cins.daily.mvp.ui.fragment.base.BaseFragment;
@@ -53,16 +57,27 @@ public class NewsListFragment extends BaseFragment implements NewsListView, OnIt
     @Inject
     NewsRecyclerViewAdapter mNewsRecyclerViewAdapter;
     @Inject
-    NewsListPresenter mNewsListPresenter;
+    NewsPresenterImpl mNewsListPresenter;
+
+    @Inject
+    @ContextLife("Activity")
+    Context mContext;
 
     private String mNewsId;
     private String mNewsType;
     private int mStartPage;
+    NewsListPresenterImpl mNewsListPresenter;
+
+    @Override
+    public void initInjecor() {
+        mFragmentComponent.inject(this);
+    }
 
     @Override
     public void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         initValues();
+        checkNetState();
     }
 
     private void initValues() {
@@ -73,35 +88,30 @@ public class NewsListFragment extends BaseFragment implements NewsListView, OnIt
         }
     }
 
-    @Nullable
-    @Override
-    public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
-        View view = inflater.inflate(R.layout.fragment_news, container, false);
-        init(view);
-        checkNetState();
-        return view;
-    }
-
-    private void init(View view) {
+    public void initViews(View view) {
         ButterKnife.bind(this, view);
 
         mNewsRv.setHasFixedSize(true);
         //setting the LayoutManager
         mNewsRv.setLayoutManager(new LinearLayoutManager(getActivity(), LinearLayoutManager.VERTICAL, false));
 
-        DaggerNewsComponent.builder()
-                .newsListModule(new NewsListModule(this, mNewsType, mNewsId))
-                .build()
-                .inject(this);
-        mPresenter = mNewsListPresenter;
-        mPresenter.onCreate();
         mNewsRecyclerViewAdapter.setOnItemClickListener(this);
+
+        mNewsListPresenter.setNewsTypeAndId(mNewsType, mNewsId);
+        mPresenter = mNewsListPresenter;
+        mPresenter.attachView(this);
+        mPresenter.onCreate();
+    }
+
+    @Override
+    public int getLayoutId() {
+        return R.layout.fragment_news;
     }
 
     private void checkNetState() {
         if (!NetUtil.isNetworkAvailable(App.getAppContext())) {
             //TODO: 刚启动app Snackbar不起作用，延迟显示也不好使，这是why？
-            Toast.makeText(getActivity(), getActivity().getString(R.string.internet_error), Toast.LENGTH_SHORT).show();
+            Toast.makeText(mContext, getActivity().getString(R.string.internet_error), Toast.LENGTH_SHORT).show();
             /*            new Handler().postDelayed(new Runnable() {
                  public void run() {
                      Snackbar.make(mNewsRV, App.getAppContext().getString(R.string.internet_error), Snackbar.LENGTH_LONG);

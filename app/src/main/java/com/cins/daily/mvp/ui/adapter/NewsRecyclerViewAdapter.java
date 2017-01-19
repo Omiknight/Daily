@@ -8,6 +8,7 @@ import android.widget.ImageView;
 import android.widget.TextView;
 
 import com.bumptech.glide.Glide;
+import com.bumptech.glide.load.DecodeFormat;
 import com.bumptech.glide.load.engine.DiskCacheStrategy;
 import com.cins.daily.App;
 import com.cins.daily.R;
@@ -69,8 +70,9 @@ public class NewsRecyclerViewAdapter extends RecyclerView.Adapter<NewsRecyclerVi
         holder.mNewsSummaryDigestTv.setText(digest);
 
         Glide.with(App.getAppContext()).load(imgSrc).asBitmap()
+                .format(DecodeFormat.PREFER_ARGB_8888)
                 .diskCacheStrategy(DiskCacheStrategy.ALL)
-//                .placeholder(R.mipmap.ic_loading)
+                .placeholder(R.drawable.ic_loading)
                 .error(R.drawable.ic_load_fail)
                 .into(holder.mNewsSummaryPhotoIv);
     }

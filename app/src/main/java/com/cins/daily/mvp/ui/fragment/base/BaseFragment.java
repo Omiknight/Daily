@@ -13,6 +13,8 @@ import com.cins.daily.di.module.FragmentModule;
 import com.cins.daily.mvp.presenter.base.BasePresenter;
 import com.squareup.leakcanary.RefWatcher;
 
+import butterknife.ButterKnife;
+
 /**
  * Created by Eric on 2017/1/16.
  */
@@ -21,6 +23,7 @@ public abstract class BaseFragment<T extends BasePresenter> extends Fragment {
 
     protected FragmentComponent mFragmentComponent;
     protected T mPresenter;
+    private View mFragmentView;
 
     public abstract void initInjecor();
     public abstract void initViews(View view);
@@ -42,7 +45,12 @@ public abstract class BaseFragment<T extends BasePresenter> extends Fragment {
     @Nullable
     @Override
     public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
-        return inflater.inflate(getLayoutId(), container, false);
+        if (mFragmentView == null) {
+            mFragmentView = inflater.inflate(getLayoutId(), container, false);
+            ButterKnife.bind(this, mFragmentView);
+            initViews(mFragmentView);
+        }
+        return mFragmentView;
     }
 
     @Override

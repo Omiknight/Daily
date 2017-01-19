@@ -90,7 +90,6 @@ public class NewsDetailActivity extends BaseActivity implements NewsDetailView {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         NetUtil.checkNetworkState(getString(R.string.internet_error));
-
     }
 
 
@@ -122,6 +121,7 @@ public class NewsDetailActivity extends BaseActivity implements NewsDetailView {
 
     private void setNewsDetailPhotoIv(String imgSrc) {
         Glide.with(this).load(imgSrc).asBitmap()
+                .placeholder(R.drawable.ic_load_fail)
                 .format(DecodeFormat.PREFER_ARGB_8888)
                 .diskCacheStrategy(DiskCacheStrategy.ALL)
                 .error(R.drawable.ic_load_fail)

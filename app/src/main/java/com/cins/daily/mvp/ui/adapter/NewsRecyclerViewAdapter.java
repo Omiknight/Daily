@@ -30,8 +30,11 @@ import butterknife.ButterKnife;
  * Created by Eric on 2017/1/16.
  */
 
-public class NewsRecyclerViewAdapter extends RecyclerView.Adapter<NewsRecyclerViewAdapter.ViewHolder> {
+public class NewsRecyclerViewAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
 
+    public static final int TYPE_ITEM = 0;
+    public static final int TYPE_FOOTER = 1;
+    private boolean mIsShowFooter;
     private List<NewsSummary> mNewsSummaryList;
     private OnItemClickListener mOnItemClickListener;
     private int mLastPosition = -1;
@@ -55,12 +58,23 @@ public class NewsRecyclerViewAdapter extends RecyclerView.Adapter<NewsRecyclerVi
 
     @Override
     public ViewHolder onCreateViewHolder(ViewGroup parent, final int viewType) {
-        View view =
-                LayoutInflater.from(parent.getContext()).inflate(R.layout.item_news, parent, false);
-        final ViewHolder holder = new ViewHolder(view);
+        if (viewType == TYPE_FOOTER) {
+            View view = LayoutInflater.from(parent.getContext()).inflate(R.layout.item_news, parent, false);
+            return new FooterViewHolder(view);
+        } else {
+            View view = LayoutInflater.from(parent.getContext()).inflate(R.layout.item_news_footer, parent, false);
+            final ItemViewHolder itemViewHolder = new ItemViewHolder(view);
+            setItemOnClick(itemViewHolder);
+            return itemViewHolder;
+        }
 
         setItemOnClick(holder);
         return holder;
+    }
+
+    @Override
+    public void onBindViewHolder(RecyclerView.ViewHolder holder, int position) {
+
     }
 
     @Override
@@ -114,14 +128,6 @@ public class NewsRecyclerViewAdapter extends RecyclerView.Adapter<NewsRecyclerVi
         }
     }
 
-    @Override
-    public void onViewDetachedFromWindow(ViewHolder holder) {
-        super.onViewDetachedFromWindow(holder);
-        if (holder.itemView.getAnimation() != null && holder.itemView
-                .getAnimation().hasStarted()) {
-            holder.itemView.clearAnimation();
-        }
-    }
 
     public class ViewHolder extends RecyclerView.ViewHolder {
 
@@ -137,6 +143,11 @@ public class NewsRecyclerViewAdapter extends RecyclerView.Adapter<NewsRecyclerVi
         public ViewHolder(View itemView) {
             super(itemView);
             ButterKnife.bind(this, itemView);
+        }
+    }
+    class FooterViewHolder extends RecyclerView.ViewHolder {
+        public FooterViewHolder(View itemView) {
+            super(itemView);
         }
     }
 }

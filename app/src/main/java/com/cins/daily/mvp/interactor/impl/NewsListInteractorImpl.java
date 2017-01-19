@@ -49,7 +49,7 @@ public class NewsListInteractorImpl implements NewsListInteractor<List<NewsSumma
         // 加一句unsubscribeOn(io)
         return RetrofitManager.getInstance(HostType.NETEASE_NEWS_VIDEO).getNewsListObservable(type, id, startPage)
                 .subscribeOn(Schedulers.io())
-                .observeOn(AndroidSchedulers.mainThread())
+
                 .unsubscribeOn(Schedulers.io())
                 .flatMap(new Func1<Map<String, List<NewsSummary>>, Observable<NewsSummary>>() {
                     @Override
@@ -69,6 +69,7 @@ public class NewsListInteractorImpl implements NewsListInteractor<List<NewsSumma
                         return newsSummary;
                     }
                 })
+                .observeOn(AndroidSchedulers.mainThread())
                 .toList()
                 .subscribe(new Subscriber<List<NewsSummary>>() {
                     @Override

@@ -10,6 +10,8 @@ import android.support.annotation.Nullable;
 import android.support.design.widget.Snackbar;
 import android.support.v4.app.ActivityCompat;
 import android.support.v4.app.ActivityOptionsCompat;
+import android.support.v4.content.ContextCompat;
+import android.support.v4.widget.SwipeRefreshLayout;
 import android.support.v7.widget.DefaultItemAnimator;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
@@ -21,6 +23,7 @@ import android.widget.Toast;
 import com.cins.daily.App;
 import com.cins.daily.R;
 import com.cins.daily.common.Constants;
+import com.cins.daily.common.LoadNewsType;
 import com.cins.daily.di.scope.ContextLife;
 import com.cins.daily.listener.OnItemClickListener;
 import com.cins.daily.mvp.entity.NewsSummary;
@@ -44,12 +47,14 @@ import butterknife.ButterKnife;
  * Created by Eric on 2017/1/16.
  */
 
-public class NewsListFragment extends BaseFragment implements NewsListView, OnItemClickListener {
+public class NewsListFragment extends BaseFragment implements NewsListView, OnItemClickListener, SwipeRefreshLayout.OnRefreshListener {
 
     @BindView(R.id.news_rv)
     RecyclerView mNewsRv;
     @BindView(R.id.progress_bar)
     ProgressBar mProgressBar;
+    @BindView(R.id.swipe_refresh_layout)
+    SwipeRefreshLayout mSwipeRefreshLayout;
 
     @Inject
     NewsRecyclerViewAdapter mNewsRecyclerViewAdapter;
@@ -65,6 +70,8 @@ public class NewsListFragment extends BaseFragment implements NewsListView, OnIt
     private int mStartPage;
     NewsListPresenterImpl mNewsListPresenter;
 
+    private boolean mIsAllLoaded;
+
     @Override
     public void initInjecor() {
         mFragmentComponent.inject(this);
@@ -75,6 +82,18 @@ public class NewsListFragment extends BaseFragment implements NewsListView, OnIt
         super.onCreate(savedInstanceState);
         initValues();
         checkNetState();
+    }
+
+    private void initSwipeRefreshLayout() {
+        mSwipeRefreshLayout.setOnRefreshListener(this);
+        mSwipeRefreshLayout.setColorSchemeColors(ContextCompat.getColor(mActivity, R.color.colorPrimary));
+    }
+
+    private void initPresenter() {
+        mNewsListPresenter.setNewsTypeAndId(mNewsType, mNewsId);
+        mPresenter = mNewsListPresenter;
+        mPresenter.attachView(this);
+        mPresenter.onCreate();
     }
 
     private void initValues() {
@@ -186,9 +205,70 @@ public class NewsListFragment extends BaseFragment implements NewsListView, OnIt
     }
 
     @Override
+    public void setNewsList(List<NewsSummary> newsSummary, @LoadNewsType.checker int loadType) {
+        switch (loadType) {
+            case LoadNewsType.TYPE_REFRESH_SUCCESS:
+                mSwipeRefreshLayout.setRefreshing(false);
+                mNewsRecyclerViewAdapter.setItems(newsSummary);
+                if (mNewsRV.getAdapter() == null) {
+                    mNewsRV.setAdapter(mNewsRecyclerViewAdapter);
+                } else {
+                    mNewsRecyclerViewAdapter.notifyDataSetChanged();
+                }
+                break;
+            case LoadNewsType.TYPE_REFRESH_ERROR:
+                mSwipeRefreshLayout.setRefreshing(false);
+                break;
+            case LoadNewsType.TYPE_LOAD_MORE_SUCCESS:
+                mNewsRecyclerViewAdapter.hideFooter();
+                if (newsSummary == null || newsSummary.size() == 0) {
+                    mIsAllLoaded = true;
+                    Snackbar.make(mNewsRV, getString(R.string.no_more), Snackbar.LENGTH_SHORT).show();
+                } else {
+                    mNewsRecyclerViewAdapter.addMore(newsSummary);
+                }
+                break;
+            case LoadNewsType.TYPE_LOAD_MORE_ERROR:
+                mNewsRecyclerViewAdapter.hideFooter();
+                break;
+        }
+    }
+
+    @Override
+    public void onRefresh() {
+
+    }
+
+    private void initRecyclerView() {
+
+        mNewsRV.setHasFixedSize(true);
+        mNewsRV.setLayoutManager(new LinearLayoutManager(mActivity,
+                LinearLayoutManager.VERTICAL, false));
+        mNewsRV.setItemAnimator(new DefaultItemAnimator());
+        mNewsRV.addOnScrollListener(new RecyclerView.OnScrollListener() {
+            @Override
+            public void onScrollStateChanged(RecyclerView recyclerView, int newState) {
+                super.onScrollStateChanged(recyclerView, newState);
+                RecyclerView.LayoutManager layoutManager = recyclerView.getLayoutManager();
+
+                int lastVisibleItemPosition = ((LinearLayoutManager) layoutManager)
+                        .findLastVisibleItemPosition();
+                int visibleItemCount = layoutManager.getChildCount();
+                int totalItemCount = layoutManager.getItemCount();
+
+                if (!mIsAllLoaded && visibleItemCount > 0 && newState == RecyclerView.SCROLL_STATE_IDLE
+                        && lastVisibleItemPosition >= totalItemCount - 1) {
+                    mNewsListPresenter.loadMore();
+                    mNewsRecyclerViewAdapter.showFooter();//                    mNewsRV.scrollToPosition(mNewsRecyclerViewAdapter.getItemCount() - 1);
+                }
+            }
+        });
+
+        mNewsRecyclerViewAdapter.setOnItemClickListener(this);
+    }
+
+    @Override
     public void setNewsList(List<NewsSummary> newsSummary) {
-        mNewsRecyclerViewAdapter.setItems(newsSummary);
-        mNewsRv.setAdapter(mNewsRecyclerViewAdapter);
-        mNewsRv.setAnimation(new DefaultItemAnimator());
+
     }
 }

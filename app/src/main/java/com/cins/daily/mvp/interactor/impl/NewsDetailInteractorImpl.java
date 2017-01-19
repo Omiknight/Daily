@@ -34,7 +34,6 @@ public class NewsDetailInteractorImpl implements NewsDetailInteractor<NewsDetail
         return RetrofitManager.getInstance(HostType.NETEASE_NEWS_VIDEO).getNewsDetailObservable(postId)
                 .unsubscribeOn(Schedulers.io())
                 .subscribeOn(Schedulers.io())
-                .observeOn(AndroidSchedulers.mainThread())
                 .map(new Func1<Map<String, NewsDetail>, NewsDetail>() {
                     @Override
                     public NewsDetail call(Map<String, NewsDetail> map) {
@@ -52,6 +51,7 @@ public class NewsDetailInteractorImpl implements NewsDetailInteractor<NewsDetail
                         return newsDetail;
                     }
                 })
+                .observeOn(AndroidSchedulers.mainThread())
                 .subscribe(new Observer<NewsDetail>() {
                     @Override
                     public void onCompleted() {

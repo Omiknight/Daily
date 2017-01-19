@@ -41,6 +41,8 @@ public abstract class BaseActivity<T extends BasePresenter> extends AppCompatAct
     public abstract void initInjector();
     public abstract void initViews();
 
+    public abstract void initSupportActionBar();
+
     protected ActivityModule getActivityModule() {
         return new ActivityModule(this);
     }
@@ -49,10 +51,13 @@ public abstract class BaseActivity<T extends BasePresenter> extends AppCompatAct
         super.onCreate(savedInstanceState);
 
         setNightOrDayMode();
+        initInjector();
         int layoutId = getLayoutId();
         setContentView(layoutId);
-        initInjector();
+        initSupportActionBar();
+
         initViews();
+        mPresenter.onCreate();
     }
 
     private void setNightOrDayMode() {

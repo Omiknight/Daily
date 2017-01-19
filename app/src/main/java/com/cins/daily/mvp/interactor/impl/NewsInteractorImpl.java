@@ -33,7 +33,7 @@ public class NewsInteractorImpl implements NewsInteractor<List<NewsChannelTable>
             @Override
             public void call(Subscriber<? super List<NewsChannelTable>> subscriber) {
                 NewsChannelTableManager.initDB();
-                subscriber.onNext(NewsChannelTableManager.loadNewsChannels());
+                subscriber.onNext(NewsChannelTableManager.loadNewsChannelsMine());
                 subscriber.onCompleted();
             }
         })

@@ -7,6 +7,7 @@ import com.cins.daily.di.module.ActivityModule;
 import com.cins.daily.di.scope.ContextLife;
 import com.cins.daily.di.scope.PerActivity;
 import com.cins.daily.mvp.ui.activities.NewsActivity;
+import com.cins.daily.mvp.ui.activities.NewsChannelActivity;
 import com.cins.daily.mvp.ui.activities.NewsDetailActivity;
 
 import dagger.Component;

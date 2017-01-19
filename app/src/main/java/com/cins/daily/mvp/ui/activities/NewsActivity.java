@@ -18,6 +18,10 @@ import android.view.MenuItem;
 import android.view.View;
 
 import com.cins.daily.R;
+import com.cins.daily.common.Constants;
+import com.cins.daily.di.component.DaggerNewsComponent;
+import com.cins.daily.di.module.NewsModule;
+import com.cins.daily.greendao.NewsChannelTable;
 import com.cins.daily.mvp.presenter.NewsPresenter;
 import com.cins.daily.mvp.ui.activities.base.BaseActivity;
 import com.cins.daily.mvp.ui.fragment.NewsListFragment;
@@ -30,6 +34,7 @@ import javax.inject.Inject;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
+import butterknife.OnClick;
 
 public class NewsActivity extends BaseActivity
         implements NavigationView.OnNavigationItemSelectedListener {
@@ -56,17 +61,8 @@ public class NewsActivity extends BaseActivity
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_news);
-        ButterKnife.bind(this);
-        setSupportActionBar(mToolbar);
-        setStatusBarTranslucent();
+        init();
 
-        mFab.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                Snackbar.make(view, "Replace with your own action", Snackbar.LENGTH_LONG)
-                        .setAction("Action", null).show();
-            }
-        });
 
         ActionBarDrawerToggle toggle = new ActionBarDrawerToggle(
                 this, mDrawerLayout, mToolbar, R.string.navigation_drawer_open, R.string.navigation_drawer_close);
@@ -75,12 +71,46 @@ public class NewsActivity extends BaseActivity
 
         mNavView.setNavigationItemSelectedListener(this);
 
-        mPresenter = mNewsPresenter;
-        mPresenter.onCreate();
+
         initViewPager();
     }
 
-    private void initViewPager() {
+    private void init() {
+        ButterKnife.bind(this);
+        setSupportActionBar(mToolbar);
+        setStatusBarTranslucent();
+        DaggerNewsComponent.builder()
+                .newsModule(new NewsModule(this))
+                .build().inject(this);
+        mPresenter = mNewsPresenter;
+        mPresenter.onCreate();
+    }
+
+    @OnClick(R.id.fab)
+    public void onClick() {
+/*        Snackbar.make(view, "Replace with your own action", Snackbar.LENGTH_LONG)
+                .setAction("Action", null).show();*/
+        changeToDayOrNightMode();
+        recreate();
+    }
+
+    private void changeToDayOrNightMode() {
+        if (MyUtils.isNightMode()) {
+            changeToDay();
+            MyUtils.saveTheme(false);
+        } else {
+            changeToNight();
+            MyUtils.saveTheme(true);
+        }
+
+    }
+
+    private void initViewPager(List<NewsChannelTable> newsChannels) {
+
+        final List<String> channelNames = new ArrayList<>();
+        if (newsChannels != null) {
+            setNewsList(newsChannels, channelNames);
+        }
         initFragment();
         //setting the mode of TabLayout
         mTabs.setTabMode(TabLayout.MODE_FIXED);
@@ -94,7 +124,34 @@ public class NewsActivity extends BaseActivity
 
         //add viewpager to TabLayout
         mTabs.setupWithViewPager(mViewPager);
+        setViewPager(channelNames);
     }
+
+    private void setNewsList(List<NewsChannelTable> newsChannels, List<String> channelNames) {
+        for (NewsChannelTable newsChannelTable : newsChannels) {
+            NewsListFragment newsListFragment = createListFragments(newsChannelTable);
+            mNewsFragmentList.add(newsListFragment);
+            channelNames.add(newsChannelTable.getNewsChannelName());
+        }
+    }
+
+    private NewsListFragment createListFragments(NewsChannelTable newsChannel) {
+        NewsListFragment fragment = new NewsListFragment();
+        Bundle bundle = new Bundle();
+        bundle.putString(Constants.NEWS_ID, newsChannel.getNewsChannelId());
+        bundle.putString(Constants.NEWS_TYPE, newsChannel.getNewsChannelType());
+        bundle.putInt(Constants.CHANNEL_POSITION, newsChannel.getNewsChannelIndex());
+        fragment.setArguments(bundle);
+        return fragment;
+    }
+
+    public void setViewPager(List<String> viewPager) {
+        mTabs.setTabMode(TabLayout.MODE_FIXED);
+        NewsFragmentPagerAdapter adapter = new NewsFragmentPagerAdapter(getSupportFragmentManager(), channelNames, mNewsFragmentList);
+        mViewPager.setAdapter(adapter);
+        mTabs.setupWithViewPager(mViewPager);
+    }
+
 
     private class NewsFragmentPagerAdapter extends FragmentPagerAdapter {
 
@@ -119,18 +176,6 @@ public class NewsActivity extends BaseActivity
             return mNewsFragmentList.size();
         }
     }
-
-    private void initFragment() {
-        NewsListFragment newsFragment1 = new NewsListFragment();
-        NewsListFragment newsFragment2 = new NewsListFragment();
-        NewsListFragment newsFragment3 = new NewsListFragment();
-
-        mNewsFragmentList = new ArrayList<>();
-        mNewsFragmentList.add(newsFragment1);
-        mNewsFragmentList.add(newsFragment2);
-        mNewsFragmentList.add(newsFragment3);
-    }
-
 
     @Override
     public void onBackPressed() {
@@ -191,7 +236,7 @@ public class NewsActivity extends BaseActivity
 
         } else if (id == R.id.nav_send) {
 
-        }else if (id == R.id.)
+        }
 
         DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
         drawer.closeDrawer(GravityCompat.START);

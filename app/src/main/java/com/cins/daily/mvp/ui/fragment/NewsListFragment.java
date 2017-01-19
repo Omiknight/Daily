@@ -62,6 +62,10 @@ public class NewsListFragment extends BaseFragment implements NewsListView, OnIt
     @Override
     public void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        initValues();
+    }
+
+    private void initValues() {
         if (getArguments() != null) {
             mNewsId = getArguments().getString(Constants.NEWS_ID);
             mNewsType = getArguments().getString(Constants.NEWS_TYPE);
@@ -73,6 +77,12 @@ public class NewsListFragment extends BaseFragment implements NewsListView, OnIt
     @Override
     public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.fragment_news, container, false);
+        init(view);
+        checkNetState();
+        return view;
+    }
+
+    private void init(View view) {
         ButterKnife.bind(this, view);
 
         mNewsRv.setHasFixedSize(true);
@@ -85,8 +95,7 @@ public class NewsListFragment extends BaseFragment implements NewsListView, OnIt
                 .inject(this);
         mPresenter = mNewsListPresenter;
         mPresenter.onCreate();
-        checkNetState();
-        return view;
+        mNewsRecyclerViewAdapter.setOnItemClickListener(this);
     }
 
     private void checkNetState() {
@@ -130,18 +139,18 @@ public class NewsListFragment extends BaseFragment implements NewsListView, OnIt
 
     @Override
     public void onDestroyView() {
-        mNewsListPresenter.onDestroy();
         super.onDestroyView();
+        mNewsListPresenter.onDestroy();
     }
 
     @TargetApi(Build.VERSION_CODES.LOLLIPOP)
     @Override
     public void onItemClick(View view, int position) {
-        List<NewsSummary> newsSummaryList = mNewsRecyclerViewAdapter.getNewsSummaryList();
-        goToNewsDetailActivity(view, position, newsSummaryList);
+        goToNewsDetailActivity(view, position);
     }
 
-    private void goToNewsDetailActivity(View view, int position, List<NewsSummary> newsSummaryList) {
+    private void goToNewsDetailActivity(View view, int position) {
+        List<NewsSummary> newsSummaryList = mNewsRecyclerViewAdapter.getNewsSummaryList();
         Intent intent = new Intent(getActivity(), NewsDetailActivity.class);
         intent.putExtra(Constants.NEWS_POST_ID, newsSummaryList.get(position).getPostid());
         intent.putExtra(Constants.NEWS_IMG_RES, newsSummaryList.get(position).getImgsrc());

@@ -21,13 +21,12 @@ import com.bumptech.glide.request.target.SimpleTarget;
 import com.cins.daily.App;
 import com.cins.daily.R;
 import com.cins.daily.common.Constants;
-import com.cins.daily.di.component.DaggerNewsComponent;
-import com.cins.daily.di.module.NewsDetailModule;
 import com.cins.daily.mvp.entity.NewsDetail;
 import com.cins.daily.mvp.presenter.NewsDetailPresenter;
 import com.cins.daily.mvp.ui.activities.base.BaseActivity;
 import com.cins.daily.mvp.view.NewsDetailView;
 import com.cins.daily.utils.MyUtils;
+import com.cins.daily.utils.NetUtil;
 import com.cins.daily.widget.URLImageGetter;
 import com.socks.library.KLog;
 
@@ -68,24 +67,33 @@ public class NewsDetailActivity extends BaseActivity implements NewsDetailView {
     URLImageGetter mURLImageGetter;
 
     @Override
-    protected void onCreate(Bundle savedInstanceState) {
-        super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_news_detail);
-        ButterKnife.bind(this);
-        init();
-        setSupportActionBar(mToolbar);
+    public int getLayoutId() {
+        return 0;
     }
 
-    private void init() {
-        ButterKnife.bind(this);
-        String postId = getIntent().getStringExtra(Constants.NEWS_POST_ID);
-        DaggerNewsComponent.builder()
-                .newDetailModule(new NewsDetailModule(this, postId))
-                .build().inject(this);
+    @Override
+    public void initInjector() {
 
+    }
+
+    @Override
+    public void initViews() {
+        setSupportActionBar(mToolbar);
+        String postId = getIntent().getStringExtra(Constants.NEWS_POST_ID);
+        mNewsDetailPresenter.setPosId(postId);
         mPresenter = mNewsDetailPresenter;
+        mPresenter.attachView(this);
         mPresenter.onCreate();
     }
+
+    @Override
+    protected void onCreate(Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+        NetUtil.checkNetworkState(getString(R.string.internet_error));
+
+    }
+
+
 
     @SuppressWarnings("deprecation")
     @Override
@@ -108,7 +116,7 @@ public class NewsDetailActivity extends BaseActivity implements NewsDetailView {
 
     private void setToolBarLayout(String newsTitle) {
         mToolbarLayout.setTitle(newsTitle);
-        mToolbarLayout.setExpandedTitleColor(ContextCompat.getColor(this, R.color.colorPrimary));
+        mToolbarLayout.setExpandedTitleColor(ContextCompat.getColor(this, R.color.white));
         mToolbarLayout.setCollapsedTitleTextColor(ContextCompat.getColor(this, R.color.primary_text_white));
     }
 

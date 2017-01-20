@@ -1,11 +1,13 @@
 package com.cins.daily.mvp.presenter.impl;
 
 import com.cins.daily.common.Constants;
+import com.cins.daily.event.ChannelChangeEvent;
 import com.cins.daily.greendao.NewsChannelTable;
 import com.cins.daily.mvp.interactor.impl.NewsChannelInteractorImpl;
 import com.cins.daily.mvp.presenter.NewsChannelPresenter;
 import com.cins.daily.mvp.presenter.base.BasePresenterImpl;
 import com.cins.daily.mvp.view.NewsChannelView;
+import com.cins.daily.utils.RxBus;
 
 import java.util.List;
 import java.util.Map;
@@ -25,6 +27,14 @@ public class NewsChannelPresenterImpl extends BasePresenterImpl<NewsChannelView,
     @Inject
     public NewsChannelPresenterImpl(NewsChannelInteractorImpl newsChannelInteractor) {
         mNewsChannelInteractor = newsChannelInteractor;
+    }
+
+    @Override
+    public void onDestroy() {
+        super.onDestroy();
+        if (mIsChannelChanged) {
+            RxBus.getInstance().post(new ChannelChangeEvent());
+        }
     }
 
     @Override

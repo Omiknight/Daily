@@ -1,5 +1,6 @@
 package com.cins.daily.mvp.ui.activities;
 
+import android.content.Intent;
 import android.os.Bundle;
 import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.NavigationView;
@@ -25,6 +26,7 @@ import com.cins.daily.mvp.presenter.impl.NewsPresenterImpl;
 import com.cins.daily.mvp.ui.activities.base.BaseActivity;
 import com.cins.daily.mvp.ui.fragment.NewsListFragment;
 import com.cins.daily.utils.MyUtils;
+import com.cins.daily.utils.RxBus;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -37,6 +39,9 @@ import butterknife.OnClick;
 
 public class NewsActivity extends BaseActivity
         implements NavigationView.OnNavigationItemSelectedListener {
+
+    private String mCurrentViewPagerName;
+    private List<String> mChannelNames;
 
     @BindView(R.id.toolbar)
     Toolbar mToolbar;
@@ -58,18 +63,37 @@ public class NewsActivity extends BaseActivity
 
     @Override
     public int getLayoutId() {
-        return 0;
+        return R.layout.activity_news;
     }
 
     @Override
     public void initInjector() {
-
+        mActivityComponent.inject(this);
     }
 
     @Override
     public void initViews() {
+//        mIsHasNavigationView = true;
+        mBaseNavView = mNavView;
+
+        mPresenter = mNewsPresenter;
+        mPresenter.attachView(this);
+    }
+
+    @OnClick({R.id.fab, R.id.add_channel_iv})
+    public void onClick(View view) {
+        switch (view.getId()) {
+            case R.id.fab:
+                RxBus.getInstance().post(new ScrollToTopEvent());
+                break;
+            case R.id.add_channel_iv:
+                Intent intent = new Intent(this, NewsChannelActivity.class);
+                startActivity(intent);
+                break;
+        }
 
     }
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -120,27 +144,15 @@ public class NewsActivity extends BaseActivity
     }
 
     private void initViewPager(List<NewsChannelTable> newsChannels) {
-
         final List<String> channelNames = new ArrayList<>();
         if (newsChannels != null) {
             setNewsList(newsChannels, channelNames);
+            setViewPager(channelNames);
         }
-        //setting the mode of TabLayout
-        mTabs.setTabMode(TabLayout.MODE_FIXED);
-        //add the name of tab to TabLayout
-        mTabs.addTab(mTabs.newTab().setText("要闻"));
-        mTabs.addTab(mTabs.newTab().setText("科技"));
-        mTabs.addTab(mTabs.newTab().setText("娱乐"));
-
-        NewsFragmentPagerAdapter adapter = new NewsFragmentPagerAdapter(getSupportFragmentManager());
-        mViewPager.setAdapter(adapter);
-
-        //add viewpager to TabLayout
-        mTabs.setupWithViewPager(mViewPager);
-        setViewPager(channelNames);
     }
 
     private void setNewsList(List<NewsChannelTable> newsChannels, List<String> channelNames) {
+        mNewsFragmentList.clear();
         for (NewsChannelTable newsChannelTable : newsChannels) {
             NewsListFragment newsListFragment = createListFragments(newsChannelTable);
             mNewsFragmentList.add(newsListFragment);
@@ -158,37 +170,33 @@ public class NewsActivity extends BaseActivity
         return fragment;
     }
 
-    public void setViewPager(List<String> viewPager) {
+    private void setViewPager(List<String> viewPager) {
         mTabs.setTabMode(TabLayout.MODE_FIXED);
         NewsFragmentPagerAdapter adapter = new NewsFragmentPagerAdapter(getSupportFragmentManager(), channelNames, mNewsFragmentList);
         mViewPager.setAdapter(adapter);
         mTabs.setupWithViewPager(mViewPager);
     }
 
+    private void setPageChangeListener() {
+            mViewPager.addOnPageChangeListener(new ViewPager.OnPageChangeListener() {
+                @Override
+                public void onPageScrolled(int position, float positionOffset, int positionOffsetPixels) {
 
-    private class NewsFragmentPagerAdapter extends FragmentPagerAdapter {
+                }
 
-        private final String[] titles = {"要闻", "科技","娱乐"};
+                @Override
+                public void onPageSelected(int position) {
 
-        public NewsFragmentPagerAdapter(FragmentManager fm) {
-            super(fm);
-        }
+                }
 
-        @Override
-        public CharSequence getPageTitle(int position) {
-            return titles[position];
-        }
+                @Override
+                public void onPageScrollStateChanged(int state) {
 
-        @Override
-        public Fragment getItem(int position) {
-            return mNewsFragmentList.get(position);
-        }
-
-        @Override
-        public int getCount() {
-            return mNewsFragmentList.size();
-        }
+                }
+            });
     }
+
+
 
     @Override
     public void onBackPressed() {

@@ -10,6 +10,7 @@ import android.widget.TextView;
 import com.cins.daily.App;
 import com.cins.daily.R;
 import com.cins.daily.greendao.NewsChannelTable;
+import com.cins.daily.utils.MyUtils;
 
 import java.util.List;
 
@@ -48,6 +49,16 @@ public class NewsChannelAdapter extends RecyclerView.Adapter<NewsChannelAdapter.
     @Override
     public int getItemCount() {
         return mNewsChannelTableList.size();
+    }
+
+    private int getColorId() {
+        int colorId;
+        if (MyUtils.isNightMode()) {
+            colorId = R.color.alpha_40_white;
+        } else {
+            colorId = R.color.alpha_40_black;
+        }
+        return colorId;
     }
 
     class ViewHolder extends RecyclerView.ViewHolder {

@@ -256,6 +256,22 @@ public class NewsSummary {
         this.ptime = ptime;
     }
 
+    public List<AdsBean> getAds() {
+        return ads;
+    }
+
+    public void setAds(List<AdsBean> ads) {
+        this.ads = ads;
+    }
+
+    public List<ImgextraBean> getImgextra() {
+        return imgextra;
+    }
+
+    public void setImgextra(List<ImgextraBean> imgextra) {
+        this.imgextra = imgextra;
+    }
+
     public static class AdsBean {
         private String title;
         private String tag;
@@ -315,5 +331,4 @@ public class NewsSummary {
             this.imgsrc = imgsrc;
         }
     }
-
 }

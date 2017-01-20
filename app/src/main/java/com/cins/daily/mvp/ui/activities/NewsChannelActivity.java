@@ -6,22 +6,27 @@ import android.support.v7.widget.DefaultItemAnimator;
 import android.support.v7.widget.GridLayoutManager;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
+import android.support.v7.widget.helper.ItemTouchHelper;
 import android.view.View;
 import android.widget.Toolbar;
 
 import com.cins.daily.R;
+import com.cins.daily.event.ChannelItemMoveEvent;
 import com.cins.daily.greendao.NewsChannelTable;
 import com.cins.daily.listener.OnItemClickListener;
 import com.cins.daily.mvp.presenter.impl.NewsChannelPresenterImpl;
 import com.cins.daily.mvp.ui.activities.base.BaseActivity;
 import com.cins.daily.mvp.ui.adapter.NewsChannelAdapter;
 import com.cins.daily.mvp.view.NewsChannelView;
+import com.cins.daily.utils.RxBus;
+import com.cins.daily.widget.ItemDragHelperCallback;
 
 import java.util.List;
 
 import javax.inject.Inject;
 
 import butterknife.BindView;
+import rx.functions.Action1;
 
 /**
  * Created by Eric on 2017/1/19.
@@ -44,6 +49,15 @@ public class NewsChannelActivity extends BaseActivity implements NewsChannelView
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        mSubscription = RxBus.getInstance().toObservable(ChannelItemMoveEvent.class)
+                .subscribe(new Action1<ChannelItemMoveEvent>() {
+                    @Override
+                    public void call(ChannelItemMoveEvent channelItemMoveEvent) {
+                        int fromPosition = channelItemMoveEvent.getFromPosition();
+                        int toPosition = channelItemMoveEvent.getToPosition();
+                        mNewsChannelPresenter.onItemSwap(fromPosition, toPosition);
+                    }
+                });
     }
 
     @Override

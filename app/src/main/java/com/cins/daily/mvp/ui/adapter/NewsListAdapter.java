@@ -13,7 +13,7 @@ import android.widget.TextView;
 import com.bumptech.glide.Glide;
 import com.bumptech.glide.load.DecodeFormat;
 import com.bumptech.glide.load.engine.DiskCacheStrategy;
-import com.bumptech.glide.request.animation.ViewPropertyAnimation;
+
 import com.cins.daily.App;
 import com.cins.daily.R;
 import com.cins.daily.listener.OnItemClickListener;
@@ -30,7 +30,7 @@ import butterknife.ButterKnife;
  * Created by Eric on 2017/1/16.
  */
 
-public class NewsRecyclerViewAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
+public class NewsListAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
 
     public static final int TYPE_ITEM = 0;
     public static final int TYPE_FOOTER = 1;
@@ -40,7 +40,7 @@ public class NewsRecyclerViewAdapter extends RecyclerView.Adapter<RecyclerView.V
     private int mLastPosition = -1;
 
     @Inject
-    public NewsRecyclerViewAdapter() {
+    public NewsListAdapter() {
 
     }
 

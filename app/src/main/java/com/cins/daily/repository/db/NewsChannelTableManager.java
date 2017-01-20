@@ -31,7 +31,7 @@ public class NewsChannelTableManager {
                     .getStringArray(R.array.news_channel_id));
             for (int i = 0; i < channelName.size(); i++) {
                 NewsChannelTable entity = new NewsChannelTable(channelName.get(i), channelId.get(i)
-                        , ApiConstants.getType(channelId.get(i)), i <= 10, i, i == 0);
+                        , ApiConstants.getType(channelId.get(i)), i <= 5, i, i == 0);
                 dao.insert(entity);
             }
             MyUtils.getSharedPreferences().edit().putBoolean(Constants.INIT_DB, true).apply();

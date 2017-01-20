@@ -34,6 +34,7 @@ import com.cins.daily.mvp.entity.NewsSummary;
 import com.cins.daily.mvp.presenter.impl.NewsListPresenterImpl;
 import com.cins.daily.mvp.presenter.impl.NewsPresenterImpl;
 import com.cins.daily.mvp.ui.activities.NewsDetailActivity;
+import com.cins.daily.mvp.ui.adapter.NewsListAdapter;
 import com.cins.daily.mvp.ui.adapter.NewsRecyclerViewAdapter;
 import com.cins.daily.mvp.ui.fragment.base.BaseFragment;
 import com.cins.daily.mvp.view.NewsListView;

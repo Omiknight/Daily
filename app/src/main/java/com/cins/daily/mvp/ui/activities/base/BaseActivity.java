@@ -1,12 +1,15 @@
 package com.cins.daily.mvp.ui.activities.base;
 
+import android.annotation.TargetApi;
 import android.content.Context;
 import android.graphics.PixelFormat;
 import android.os.Build;
 import android.os.Bundle;
+import android.support.design.widget.NavigationView;
 import android.support.v4.app.NotificationCompatSideChannelService;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.app.AppCompatDelegate;
+import android.support.v7.widget.Toolbar;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.WindowManager;
@@ -16,8 +19,14 @@ import com.cins.daily.R;
 import com.cins.daily.di.component.ActivityComponent;
 import com.cins.daily.di.module.ActivityModule;
 import com.cins.daily.mvp.presenter.base.BasePresenter;
+import com.cins.daily.mvp.ui.activities.NewsActivity;
+import com.cins.daily.mvp.ui.activities.NewsDetailActivity;
 import com.cins.daily.utils.MyUtils;
+import com.cins.daily.utils.NetUtil;
 import com.squareup.leakcanary.RefWatcher;
+
+import butterknife.ButterKnife;
+import rx.Subscription;
 
 
 /**
@@ -25,13 +34,13 @@ import com.squareup.leakcanary.RefWatcher;
  */
 
 public abstract class BaseActivity<T extends BasePresenter> extends AppCompatActivity {
-
     protected ActivityComponent mActivityComponent;
+    private boolean mIsChangeTheme;
 
     public ActivityComponent getActivityComponent() {
         return mActivityComponent;
     }
-    private static final String LOG_TAG = "BaseActivity";
+
     private WindowManager mWindowManager = null;
     private View mNightView = null;
     private boolean mIsAddedView;
@@ -41,24 +50,152 @@ public abstract class BaseActivity<T extends BasePresenter> extends AppCompatAct
     public abstract void initInjector();
     public abstract void initViews();
 
-    public abstract void initSupportActionBar();
+    protected Subscription mSubscription;
+    protected NavigationView mBaseNavView;
 
-    protected ActivityModule getActivityModule() {
-        return new ActivityModule(this);
-    }
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
+        NetUtil.isNetworkErrThenShowMsg();
+
         setNightOrDayMode();
-        initInjector();
+
         int layoutId = getLayoutId();
         setContentView(layoutId);
-        initSupportActionBar();
-
+        initInjector();
+        ButterKnife.bind(this);
+        initToolBar();
         initViews();
         mPresenter.onCreate();
     }
+
+        //initNightModeSwitch();
+
+/*
+    private void initAnnotation() {
+        if (getClass().isAnnotationPresent(BindValues.class)) {
+            BindValues annotation = getClass().getAnnotation(BindValues.class);
+            mIsHasNavigationView = annotation.mIsHasNavigationView();
+        }
+    }
+
+    private void initNightModeSwitch() {
+        if (this instanceof NewsActivity || this instanceof PhotoActivity) {
+            MenuItem menuNightMode = mBaseNavView.getMenu().findItem(R.id.nav_night_mode);
+            SwitchCompat dayNightSwitch = (SwitchCompat) MenuItemCompat
+                    .getActionView(menuNightMode);
+            setCheckedState(dayNightSwitch);
+            setCheckedEvent(dayNightSwitch);
+        }
+    }
+
+    private void setCheckedState(SwitchCompat dayNightSwitch) {
+        if (MyUtils.isNightMode()) {
+            dayNightSwitch.setChecked(true);
+        } else {
+            dayNightSwitch.setChecked(false);
+        }
+    }
+
+    private void setCheckedEvent(SwitchCompat dayNightSwitch) {
+        dayNightSwitch.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
+            @Override
+            public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
+                if (isChecked) {
+                    changeToNight();
+                    MyUtils.saveTheme(true);
+                } else {
+                    changeToDay();
+                    MyUtils.saveTheme(false);
+                }
+
+                mIsChangeTheme = true;
+                mDrawerLayout.closeDrawer(GravityCompat.START);
+            }
+        });
+    }
+
+    private void initActivityComponent() {
+        mActivityComponent = DaggerActivityComponent.builder()
+                .applicationComponent(((App) getApplication()).getApplicationComponent())
+                .activityModule(new ActivityModule(this))
+                .build();
+    }
+*/
+
+
+    private void initToolBar() {
+        Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
+        setSupportActionBar(toolbar);
+    }
+/*
+
+    private void initDrawerLayout() {
+
+        mDrawerLayout = (DrawerLayout) findViewById(R.id.drawer_layout);
+        Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
+        NavigationView navView = (NavigationView) findViewById(R.id.nav_view);
+
+        ActionBarDrawerToggle toggle = new ActionBarDrawerToggle(
+                this, mDrawerLayout, toolbar, R.string.navigation_drawer_open, R.string.navigation_drawer_close);
+        mDrawerLayout.addDrawerListener(toggle);
+        toggle.syncState();
+
+        if (navView != null) {
+            navView.setNavigationItemSelectedListener(new NavigationView.OnNavigationItemSelectedListener() {
+                @Override
+                public boolean onNavigationItemSelected(MenuItem item) {
+                    switch (item.getItemId()) {
+                        case R.id.nav_news:
+                            mClass = NewsActivity.class;
+                            break;
+                        case R.id.nav_photo:
+                            mClass = PhotoActivity.class;
+                            break;
+                        case R.id.nav_video:
+                            Toast.makeText(BaseActivity.this, "施工准备中...", Toast.LENGTH_SHORT).show();
+                            break;
+                        case R.id.nav_night_mode:
+                            break;
+                    }
+                    mDrawerLayout.closeDrawer(GravityCompat.START);
+                    return false;
+                }
+            });
+        }
+
+        mDrawerLayout.addDrawerListener(new DrawerLayout.SimpleDrawerListener() {
+            @Override
+            public void onDrawerClosed(View drawerView) {
+                super.onDrawerClosed(drawerView);
+                if (mClass != null) {
+                    Intent intent = new Intent(BaseActivity.this, mClass);
+                    // 此标志用于启动一个Activity的时候，若栈中存在此Activity实例，则把它调到栈顶。不创建多一个
+//                    intent.addFlags(Intent.FLAG_ACTIVITY_REORDER_TO_FRONT);
+                    startActivity(intent);
+                    overridePendingTransition(0, 0);
+                    mClass = null;
+                }
+
+                if (mIsChangeTheme) {
+                    mIsChangeTheme = false;
+                    getWindow().setWindowAnimations(R.style.WindowAnimationFadeInOut);
+                    recreate();
+                }
+            }
+        });
+    }
+
+    @Override
+    public void onBackPressed() {
+        if (mIsHasNavigationView && mDrawerLayout.isDrawerOpen(GravityCompat.START)) {
+            mDrawerLayout.closeDrawer(GravityCompat.START);
+        } else {
+            super.onBackPressed();
+        }
+    }
+*/
 
     private void setNightOrDayMode() {
         if (MyUtils.isNightMode()) {
@@ -70,8 +207,38 @@ public abstract class BaseActivity<T extends BasePresenter> extends AppCompatAct
             AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_NO);
         }
     }
+/*
 
-    public void initNightView() {
+    // TODO:适配4.4
+    @TargetApi(Build.VERSION_CODES.KITKAT)
+    protected void setStatusBarTranslucent() {
+        if ((Build.VERSION.SDK_INT >= Build.VERSION_CODES.KITKAT &&
+                !(this instanceof NewsDetailActivity || this instanceof PhotoActivity
+                        || this instanceof PhotoDetailActivity))
+                || (Build.VERSION.SDK_INT == Build.VERSION_CODES.KITKAT
+                && this instanceof NewsDetailActivity)) {
+            getWindow().addFlags(WindowManager.LayoutParams.FLAG_TRANSLUCENT_STATUS);
+            SystemBarTintManager tintManager = new SystemBarTintManager(this);
+            tintManager.setStatusBarTintEnabled(true);
+            tintManager.setStatusBarTintResource(R.color.colorPrimary);
+        }
+    }
+*/
+
+    public void changeToDay() {
+//        AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_YES);
+        getDelegate().setLocalNightMode(AppCompatDelegate.MODE_NIGHT_NO);
+        mNightView.setBackgroundResource(R.color.transparent);
+    }
+
+    public void changeToNight() {
+//        AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_NO);
+        getDelegate().setLocalNightMode(AppCompatDelegate.MODE_NIGHT_YES);
+        initNightView();
+        mNightView.setBackgroundResource(R.color.night_mask);
+    }
+
+    private void initNightView() {
         if (mIsAddedView) {
             return;
         }
@@ -87,26 +254,6 @@ public abstract class BaseActivity<T extends BasePresenter> extends AppCompatAct
         mIsAddedView = true;
     }
 
-    public void changeToDay() {
-        getDelegate().setLocalNightMode(AppCompatDelegate.MODE_NIGHT_NO);
-        mNightView.setBackgroundResource(R.color.transparent);
-    }
-
-    public void changeToNight() {
-        getDelegate().setLocalNightMode(AppCompatDelegate.MODE_NIGHT_YES);
-        initNightView();
-        mNightView.setBackgroundResource(R.color.night_mask);
-    }
-
-    // TODO:适配4.4
-    protected void setStatusBarTranslucent() {
-        if (Build.VERSION.SDK_INT > Build.VERSION_CODES.KITKAT) {
-            getWindow().addFlags(WindowManager.LayoutParams.FLAG_TRANSLUCENT_STATUS);
-            SystemBarTintManager tintManager = new SystemBarTintManager(this);
-            tintManager.setStatusBarTintEnabled(true);
-            tintManager.setStatusBarTintResource(R.color.colorPrimary);
-        }
-    }
 
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
@@ -131,8 +278,15 @@ public abstract class BaseActivity<T extends BasePresenter> extends AppCompatAct
         if (mPresenter != null) {
             mPresenter.onDestroy();
         }
+
+        removeNightModeMask();
+        MyUtils.cancelSubscription(mSubscription);
+        MyUtils.fixInputMethodManagerLeak(this);
+    }
+
+    private void removeNightModeMask() {
         if (mIsAddedView) {
-            //移除夜间蒙版
+            // 移除夜间模式蒙板
             mWindowManager.removeViewImmediate(mNightView);
             mWindowManager = null;
             mNightView = null;

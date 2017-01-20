@@ -1,13 +1,18 @@
 package com.cins.daily.mvp.ui.activities;
 
+import android.os.Bundle;
+import android.support.design.widget.Snackbar;
 import android.support.v7.widget.DefaultItemAnimator;
 import android.support.v7.widget.GridLayoutManager;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
+import android.view.View;
 import android.widget.Toolbar;
 
 import com.cins.daily.R;
 import com.cins.daily.greendao.NewsChannelTable;
+import com.cins.daily.listener.OnItemClickListener;
+import com.cins.daily.mvp.presenter.impl.NewsChannelPresenterImpl;
 import com.cins.daily.mvp.ui.activities.base.BaseActivity;
 import com.cins.daily.mvp.ui.adapter.NewsChannelAdapter;
 import com.cins.daily.mvp.view.NewsChannelView;
@@ -33,6 +38,14 @@ public class NewsChannelActivity extends BaseActivity implements NewsChannelView
     @Inject
     NewsChannelPresenterImpl mNewsChannelPresenter;
 
+    private NewsChannelAdapter mNewsChannelAdapterMine;
+    private NewsChannelAdapter mNewsChannelAdapterMore;
+
+    @Override
+    protected void onCreate(Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+    }
+
     @Override
     public int getLayoutId() {
         return R.layout.activity_news_channel;
@@ -45,7 +58,8 @@ public class NewsChannelActivity extends BaseActivity implements NewsChannelView
 
     @Override
     public void initViews() {
-
+        mPresenter = mNewsChannelPresenter;
+        mPresenter.attachView(this);
     }
 
     @Override
@@ -53,18 +67,68 @@ public class NewsChannelActivity extends BaseActivity implements NewsChannelView
         initRecyclerViewMineAndMore(newsChannelsMine, newsChannelsMore);
     }
 
-    @Override
-    public void initSupportActionBar() {
+    private void initRecyclerViewMineAndMore(List<NewsChannelTable> newsChannelsMine, List<NewsChannelTable> newsChannelsMore) {
+        initRecyclerView(mNewsChannelMineRv, newsChannelsMine, true);
+        initRecyclerView(mNewsChannelMoreRv, newsChannelsMore, false);
+    }
+
+    private void initRecyclerView(RecyclerView recyclerView, List<NewsChannelTable> newsChannels
+            , final boolean isChannelMine) {
+        // !!!加上这句将不能动态增加列表大小。。。
+//        recyclerView.setHasFixedSize(true);
+        recyclerView.setLayoutManager(new GridLayoutManager(this, 4, LinearLayoutManager.VERTICAL, false));
+        recyclerView.setItemAnimator(new DefaultItemAnimator());
+
+        if (isChannelMine) {
+            mNewsChannelAdapterMine = new NewsChannelAdapter(newsChannels);
+            recyclerView.setAdapter(mNewsChannelAdapterMine);
+            setChannelMineOnItemClick();
+
+            initItemDragHelper();
+        } else {
+            mNewsChannelAdapterMore = new NewsChannelAdapter(newsChannels);
+            recyclerView.setAdapter(mNewsChannelAdapterMore);
+            setChannelMoreOnItemClick();
+        }
 
     }
 
-    @Override
-    public void initRecyclerViewMineAndMore(RecyclerView recyclerView, List<NewsChannelTable> newsChannelsMore) {
-        recyclerView.setHasFixedSize(true);
-        recyclerView.setLayoutManager(new GridLayoutManager(this, 4, LinearLayoutManager.VERTICAL, false));
-        recyclerView.setItemAnimator(new DefaultItemAnimator());
-        NewsChannelAdapter newsChannelMineAdapter = new NewsChannelAdapter(newsChannelsMore);
-        recyclerView.setAdapter(newsChannelMineAdapter);
+    private void setChannelMineOnItemClick() {
+        mNewsChannelAdapterMine.setOnItemClickListener(new OnItemClickListener() {
+            @Override
+            public void onItemClick(View view, int position) {
+                NewsChannelTable newsChannel = mNewsChannelAdapterMine.getData().get(position);
+                boolean isNewsChannelFixed = newsChannel.getNewsChannelFixed();
+                if (!isNewsChannelFixed) {
+                    mNewsChannelAdapterMore.add(mNewsChannelAdapterMore.getItemCount(), newsChannel);
+                    mNewsChannelAdapterMine.delete(position);
+
+                    mNewsChannelPresenter.onItemAddOrRemove(newsChannel, true);
+                }
+            }
+        });
+    }
+
+    private void setChannelMoreOnItemClick() {
+        mNewsChannelAdapterMore.setOnItemClickListener(new OnItemClickListener() {
+            @Override
+            public void onItemClick(View view, int position) {
+                NewsChannelTable newsChannel = mNewsChannelAdapterMore.getData().get(position);
+                mNewsChannelAdapterMine.add(mNewsChannelAdapterMine.getItemCount(), newsChannel);
+                mNewsChannelAdapterMore.delete(position);
+
+                mNewsChannelPresenter.onItemAddOrRemove(newsChannel, false);
+
+            }
+        });
+    }
+
+    private void initItemDragHelper() {
+        ItemDragHelperCallback itemDragHelperCallback = new ItemDragHelperCallback(mNewsChannelAdapterMine);
+        ItemTouchHelper itemTouchHelper = new ItemTouchHelper(itemDragHelperCallback);
+        itemTouchHelper.attachToRecyclerView(mNewsChannelMineRv);
+
+        mNewsChannelAdapterMine.setItemDragHelperCallback(itemDragHelperCallback);
     }
 
     @Override
@@ -78,7 +142,7 @@ public class NewsChannelActivity extends BaseActivity implements NewsChannelView
     }
 
     @Override
-    public void showErrorMsg(String message) {
-
+    public void showMsg(String message) {
+        Snackbar.make(mNewsChannelMoreRv, message, Snackbar.LENGTH_SHORT).show();
     }
 }

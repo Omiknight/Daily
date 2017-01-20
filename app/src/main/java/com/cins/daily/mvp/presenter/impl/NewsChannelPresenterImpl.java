@@ -18,7 +18,9 @@ import javax.inject.Inject;
 
 public class NewsChannelPresenterImpl extends BasePresenterImpl<NewsChannelView,
         Map<Integer, List<NewsChannelTable>>> implements NewsChannelPresenter {
+
     private NewsChannelInteractorImpl mNewsChannelInteractor;
+    private boolean mIsChannelChanged;
 
     @Inject
     public NewsChannelPresenterImpl(NewsChannelInteractorImpl newsChannelInteractor) {
@@ -35,5 +37,17 @@ public class NewsChannelPresenterImpl extends BasePresenterImpl<NewsChannelView,
     public void success(Map<Integer, List<NewsChannelTable>> data) {
         super.success(data);
         mView.initRecyclerViews(data.get(Constants.NEWS_CHANNEL_MINE),data.get(Constants.NEWS_CHANNEL_MORE));
+    }
+
+    @Override
+    public void onItemSwap(int fromPosition, int toPosition) {
+        mNewsChannelInteractor.swapDb(fromPosition, toPosition);
+        mIsChannelChanged = true;
+    }
+
+    @Override
+    public void onItemAddOrRemove(NewsChannelTable newsChannel, boolean isChannelMine) {
+        mNewsChannelInteractor.updateDb(newsChannel, isChannelMine);
+        mIsChannelChanged = true;
     }
 }

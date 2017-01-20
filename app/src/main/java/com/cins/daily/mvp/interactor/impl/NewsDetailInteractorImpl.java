@@ -7,6 +7,9 @@ import com.cins.daily.listener.RequestCallBack;
 import com.cins.daily.mvp.entity.NewsDetail;
 import com.cins.daily.mvp.interactor.NewsDetailInteractor;
 import com.cins.daily.repository.network.RetrofitManager;
+import com.cins.daily.utils.MyUtils;
+import com.cins.daily.utils.TransformUtils;
+import com.socks.library.KLog;
 
 import java.util.List;
 import java.util.Map;
@@ -32,17 +35,17 @@ public class NewsDetailInteractorImpl implements NewsDetailInteractor<NewsDetail
     @Override
     public Subscription loadNewsDetail(final RequestCallBack<NewsDetail> callBack, final String postId) {
         return RetrofitManager.getInstance(HostType.NETEASE_NEWS_VIDEO).getNewsDetailObservable(postId)
-                .unsubscribeOn(Schedulers.io())
-                .subscribeOn(Schedulers.io())
                 .map(new Func1<Map<String, NewsDetail>, NewsDetail>() {
                     @Override
                     public NewsDetail call(Map<String, NewsDetail> map) {
+                        KLog.d(Thread.currentThread().getName());
+
                         NewsDetail newsDetail = map.get(postId);
                         changeNewsDetail(newsDetail);
                         return newsDetail;
                     }
                 })
-                .observeOn(AndroidSchedulers.mainThread())
+                .compose(TransformUtils.<NewsDetail>defaultSchedulers())
                 .subscribe(new Observer<NewsDetail>() {
                     @Override
                     public void onCompleted() {
@@ -51,7 +54,8 @@ public class NewsDetailInteractorImpl implements NewsDetailInteractor<NewsDetail
 
                     @Override
                     public void onError(Throwable e) {
-                        callBack.onError(App.getAppContext().getString(R.string.load_error));
+                        KLog.e(e.toString());
+                        callBack.onError(MyUtils.analyzeNetworkError(e));
                     }
 
                     @Override
@@ -61,7 +65,7 @@ public class NewsDetailInteractorImpl implements NewsDetailInteractor<NewsDetail
                 });
     }
 
-    private void changeNewsDetail(NewsDetail  newsDetail) {
+    private void changeNewsDetail(NewsDetail newsDetail) {
         List<NewsDetail.ImgBean> imgSrcs = newsDetail.getImg();
         if (isChange(imgSrcs)) {
             String newsBody = newsDetail.getBody();
@@ -76,7 +80,7 @@ public class NewsDetailInteractorImpl implements NewsDetailInteractor<NewsDetail
     private String changeNewsBody(List<NewsDetail.ImgBean> imgSrcs, String newsBody) {
         for (int i = 0; i < imgSrcs.size(); i++) {
             String oldChars = "<!--IMG#" + i + "-->";
-            String newChars = "<img src=\"" + imgSrcs.get(i).getSrc() + "\" />";
+            String newChars;
             if (i == 0) {
                 newChars = "";
             } else {

@@ -1,13 +1,19 @@
 package com.cins.daily.mvp.ui.activities;
 
+import android.content.Intent;
 import android.graphics.Bitmap;
+import android.net.Uri;
 import android.os.Bundle;
+import android.support.annotation.NonNull;
 import android.support.design.widget.AppBarLayout;
 import android.support.design.widget.CollapsingToolbarLayout;
 import android.support.design.widget.FloatingActionButton;
+import android.support.design.widget.Snackbar;
 import android.support.v4.content.ContextCompat;
 import android.support.v7.widget.Toolbar;
 import android.text.Html;
+import android.view.Menu;
+import android.view.MenuItem;
 import android.view.View;
 import android.widget.ImageView;
 import android.widget.ProgressBar;
@@ -16,26 +22,28 @@ import android.widget.TextView;
 import com.bumptech.glide.Glide;
 import com.bumptech.glide.load.DecodeFormat;
 import com.bumptech.glide.load.engine.DiskCacheStrategy;
-import com.bumptech.glide.request.animation.GlideAnimation;
-import com.bumptech.glide.request.target.SimpleTarget;
 import com.cins.daily.App;
 import com.cins.daily.R;
 import com.cins.daily.common.Constants;
 import com.cins.daily.mvp.entity.NewsDetail;
-import com.cins.daily.mvp.presenter.NewsDetailPresenter;
+import com.cins.daily.mvp.presenter.impl.NewsDetailPresenterImpl;
 import com.cins.daily.mvp.ui.activities.base.BaseActivity;
 import com.cins.daily.mvp.view.NewsDetailView;
 import com.cins.daily.utils.MyUtils;
 import com.cins.daily.utils.NetUtil;
+import com.cins.daily.utils.TransformUtils;
 import com.cins.daily.widget.URLImageGetter;
 import com.socks.library.KLog;
 
 import java.util.List;
+import java.util.concurrent.TimeUnit;
 
 import javax.inject.Inject;
 
 import butterknife.BindView;
-import butterknife.ButterKnife;
+import butterknife.OnClick;
+import rx.Observable;
+import rx.Subscriber;
 
 /**
  * Created by Eric on 2017/1/16.
@@ -45,8 +53,6 @@ public class NewsDetailActivity extends BaseActivity implements NewsDetailView {
 
     @BindView(R.id.news_detail_photo_iv)
     ImageView mNewsDetailPhotoIv;
-    @BindView(R.id.mask_view)
-    View mMaskView;
     @BindView(R.id.toolbar)
     Toolbar mToolbar;
     @BindView(R.id.toolbar_layout)
@@ -61,19 +67,24 @@ public class NewsDetailActivity extends BaseActivity implements NewsDetailView {
     ProgressBar mProgressBar;
     @BindView(R.id.fab)
     FloatingActionButton mFab;
+    @BindView(R.id.mask_view)
+    View mMaskView;
 
     @Inject
-    NewsDetailPresenter mNewsDetailPresenter;
-    URLImageGetter mURLImageGetter;
+    NewsDetailPresenterImpl mNewsDetailPresenter;
+
+   private URLImageGetter mUrlImageGetter;
+    private String mNewsTitle;
+    private String mShareLink;
 
     @Override
     public int getLayoutId() {
-        return 0;
+        return R.layout.activity_news_detail;
     }
 
     @Override
     public void initInjector() {
-
+        mActivityComponent.inject(this);
     }
 
     @Override
@@ -85,35 +96,27 @@ public class NewsDetailActivity extends BaseActivity implements NewsDetailView {
     }
 
     @Override
-    public void initSupportActionBar() {
-        setSupportActionBar(mToolbar);
-    }
-
-    @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        NetUtil.checkNetworkState(getString(R.string.internet_error));
     }
-
-
 
     @SuppressWarnings("deprecation")
     @Override
     public void setNewsDetail(NewsDetail newsDetail) {
-        String newsTitle = newsDetail.getTitle();
+        mShareLink = newsDetail.getShareLink();
+        mNewsTitle = newsDetail.getTitle();
         String newsSource = newsDetail.getSource();
 
         String newsTime = MyUtils.formatDate(newsDetail.getPtime());
         String newsBody = newsDetail.getBody();
         String NewsImgSrc = getImgSrcs(newsDetail);
 
-        setToolBarLayout(newsTitle);
 
+        setToolBarLayout(mNewsTitle);
+//        mNewsDetailTitleTv.setText(newsTitle);
         mNewsDetailFromTv.setText(getString(R.string.news_from, newsSource, newsTime));
-
         setNewsDetailPhotoIv(NewsImgSrc);
-        setNewsDetailBodyTv(newsDetail,newsBody);
-
+        setNewsDetailBodyTv(newsDetail, newsBody);
     }
 
     private void setToolBarLayout(String newsTitle) {
@@ -124,30 +127,55 @@ public class NewsDetailActivity extends BaseActivity implements NewsDetailView {
 
     private void setNewsDetailPhotoIv(String imgSrc) {
         Glide.with(this).load(imgSrc).asBitmap()
-                .placeholder(R.drawable.ic_load_fail)
+                .placeholder(R.drawable.ic_loading)
                 .format(DecodeFormat.PREFER_ARGB_8888)
-                .diskCacheStrategy(DiskCacheStrategy.ALL)
                 .error(R.drawable.ic_load_fail)
-                .into(new SimpleTarget<Bitmap>() {
+                .diskCacheStrategy(DiskCacheStrategy.ALL)
+                .into(mNewsDetailPhotoIv)/*(new SimpleTarget<Bitmap>() {
                     @Override
                     public void onResourceReady(Bitmap resource, GlideAnimation<? super Bitmap> glideAnimation) {
                         mNewsDetailPhotoIv.setImageBitmap(resource);
                         mMaskView.setVisibility(View.VISIBLE);
                     }
+                })*/;
+    }
+
+    private void setNewsDetailBodyTv(final NewsDetail newsDetail, final String newsBody) {
+        mSubscription = Observable.timer(500, TimeUnit.MILLISECONDS)
+                .compose(TransformUtils.<Long>defaultSchedulers())
+                .subscribe(new Subscriber<Long>() {
+                    @Override
+                    public void onCompleted() {
+                        mProgressBar.setVisibility(View.GONE);
+                        mFab.setVisibility(View.VISIBLE);
+                        YoYo.with(Techniques.RollIn).playOn(mFab);
+                    }
+
+                    @Override
+                    public void onError(Throwable e) {
+                        mProgressBar.setVisibility(View.GONE);
+                    }
+
+                    @Override
+                    public void onNext(Long aLong) {
+                        setBody(newsDetail, newsBody);
+                    }
                 });
     }
-    private void setNewsDetailBodyTv(NewsDetail newsDetail, String newsBody) {
-        if (mNewsDetailBodyTv != null) {
-            int imgTotal = newsDetail.getImg().size();
-            if (App.isHavePhoto() &&  imgTotal>= 2) {
-//                mNewsDetailBodyTv.setMovementMethod(LinkMovementMethod.getInstance());//加这句才能让里面的超链接生效,实测经常卡机崩溃
 
-                mURLImageGetter = new URLImageGetter(mNewsDetailBodyTv, newsBody, imgTotal);
-                mNewsDetailBodyTv.setText(Html.fromHtml(newsBody, mURLImageGetter, null));
-            } else {
-                mNewsDetailBodyTv.setText(Html.fromHtml(newsBody));
-            }
+    private void setBody(NewsDetail newsDetail, String newsBody) {
+        int imgTotal = newsDetail.getImg().size();
+        if (isShowBody(newsBody, imgTotal)) {
+//              mNewsDetailBodyTv.setMovementMethod(LinkMovementMethod.getInstance());//加这句才能让里面的超链接生效,实测经常卡机崩溃
+            mUrlImageGetter = new URLImageGetter(mNewsDetailBodyTv, newsBody, imgTotal);
+            mNewsDetailBodyTv.setText(Html.fromHtml(newsBody, mUrlImageGetter, null));
+        } else {
+            mNewsDetailBodyTv.setText(Html.fromHtml(newsBody));
         }
+    }
+
+    private boolean isShowBody(String newsBody, int imgTotal) {
+        return App.isHavePhoto() && imgTotal >= 2 && newsBody != null;
     }
 
     private String getImgSrcs(NewsDetail newsDetail) {
@@ -160,6 +188,7 @@ public class NewsDetailActivity extends BaseActivity implements NewsDetailView {
         }
         return imgSrc;
     }
+
     @Override
     public void showProgress() {
         mProgressBar.setVisibility(View.VISIBLE);
@@ -167,29 +196,87 @@ public class NewsDetailActivity extends BaseActivity implements NewsDetailView {
 
     @Override
     public void hideProgress() {
-        mProgressBar.setVisibility(View.GONE);
+//        mProgressBar.setVisibility(View.GONE);
+
     }
 
     @Override
-    public void showErrorMsg(String message) {
+    public void showMsg(String message) {
         mProgressBar.setVisibility(View.GONE);
+        if (NetUtil.isNetworkAvailable()) {
+            Snackbar.make(mAppBar, message, Snackbar.LENGTH_LONG).show();
+        }
+    }
+
+
+    @Override
+    public boolean onCreateOptionsMenu(Menu menu) {
+        // Inflate the menu; this adds items to the action bar if it is present.
+        //getMenuInflater().inflate(R.menu.news_detail, menu);
+        return true;
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        switch (item.getItemId()) {
+
+        }
+        return super.onOptionsItemSelected(item);
+    }
+
+
+
+    private void openByBrowser() {
+        Intent intent = new Intent();
+        intent.setAction("android.intent.action.VIEW");
+        if (canBrowse(intent)) {
+            Uri uri = Uri.parse(mShareLink);
+            intent.setData(uri);
+            startActivity(intent);
+        }
+    }
+
+    private boolean canBrowse(Intent intent) {
+        return intent.resolveActivity(getPackageManager()) != null && mShareLink != null;
     }
 
     @Override
     protected void onDestroy() {
         cancelUrlImageGetterSubscription();
         super.onDestroy();
+
     }
 
     private void cancelUrlImageGetterSubscription() {
         try {
-            if (mURLImageGetter != null && mURLImageGetter.mSubscription != null
-                    && !mURLImageGetter.mSubscription.isUnsubscribed()) {
-                mURLImageGetter.mSubscription.unsubscribe();
+            if (mUrlImageGetter != null && mUrlImageGetter.mSubscription != null
+                    && !mUrlImageGetter.mSubscription.isUnsubscribed()) {
+                mUrlImageGetter.mSubscription.unsubscribe();
                 KLog.d("UrlImageGetter unsubscribe");
             }
         } catch (Exception e) {
             KLog.e("取消UrlImageGetter Subscription 出现异常： " + e.toString());
         }
+    }
+
+    @OnClick(R.id.fab)
+    public void onClick() {
+        share();
+    }
+
+    private void share() {
+        Intent intent = new Intent(Intent.ACTION_SEND);
+        intent.setType("text/plain");
+        intent.putExtra(Intent.EXTRA_SUBJECT, getString(R.string.share));
+        intent.putExtra(Intent.EXTRA_TEXT, getShareContents());
+        startActivity(Intent.createChooser(intent, getTitle()));
+    }
+
+    @NonNull
+    private String getShareContents() {
+        if (mShareLink == null) {
+            mShareLink = "";
+        }
+        return getString(R.string.share_contents, mNewsTitle, mShareLink);
     }
 }

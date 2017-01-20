@@ -6,6 +6,7 @@ import com.cins.daily.greendao.NewsChannelTable;
 import com.cins.daily.listener.RequestCallBack;
 import com.cins.daily.mvp.interactor.NewsInteractor;
 import com.cins.daily.repository.db.NewsChannelTableManager;
+import com.cins.daily.utils.TransformUtils;
 
 import java.util.List;
 import javax.inject.Inject;
@@ -37,9 +38,7 @@ public class NewsInteractorImpl implements NewsInteractor<List<NewsChannelTable>
                 subscriber.onCompleted();
             }
         })
-                .unsubscribeOn(Schedulers.io())
-                .subscribeOn(Schedulers.io())
-                .observeOn(AndroidSchedulers.mainThread())
+                .compose(TransformUtils.<List<NewsChannelTable>>defaultSchedulers())
                 .subscribe(new Subscriber<List<NewsChannelTable>>() {
                     @Override
                     public void onCompleted() {

@@ -10,6 +10,7 @@ import com.cins.daily.mvp.interactor.NewsListInteractor;
 import com.cins.daily.repository.network.RetrofitManager;
 import com.cins.daily.utils.MyUtils;
 import com.cins.daily.utils.NetUtil;
+import com.cins.daily.utils.TransformUtils;
 import com.socks.library.KLog;
 
 import java.text.ParseException;
@@ -48,9 +49,6 @@ public class NewsListInteractorImpl implements NewsListInteractor<List<NewsSumma
         // unsubscribe也在主线程，然后如果这时候调用call.cancel会导致NetworkOnMainThreadException
         // 加一句unsubscribeOn(io)
         return RetrofitManager.getInstance(HostType.NETEASE_NEWS_VIDEO).getNewsListObservable(type, id, startPage)
-                .subscribeOn(Schedulers.io())
-
-                .unsubscribeOn(Schedulers.io())
                 .flatMap(new Func1<Map<String, List<NewsSummary>>, Observable<NewsSummary>>() {
                     @Override
                     public Observable<NewsSummary> call(Map<String, List<NewsSummary>> map) {
@@ -64,13 +62,20 @@ public class NewsListInteractorImpl implements NewsListInteractor<List<NewsSumma
                 .map(new Func1<NewsSummary, NewsSummary>() {
                     @Override
                     public NewsSummary call(NewsSummary newsSummary) {
-                        String ptime = MyUtils.formatDate(newsSummary.getPtime())
+                        String ptime = MyUtils.formatDate(newsSummary.getPtime());
                         newsSummary.setPtime(ptime);
                         return newsSummary;
                     }
                 })
-                .observeOn(AndroidSchedulers.mainThread())
-                .toList()
+//                .toList()
+                .distinct()
+                .toSortedList(new Func2<NewsSummary, NewsSummary, Integer>() {
+                    @Override
+                    public Integer call(NewsSummary newsSummary, NewsSummary newsSummary2) {
+                        return newsSummary2.getPtime().compareTo(newsSummary.getPtime());
+                    }
+                })
+                .compose(TransformUtils.<List<NewsSummary>>defaultSchedulers())
                 .subscribe(new Subscriber<List<NewsSummary>>() {
                     @Override
                     public void onCompleted() {
@@ -83,8 +88,8 @@ public class NewsListInteractorImpl implements NewsListInteractor<List<NewsSumma
                         KLog.e(e.toString());
 //                        checkNetState(listener);
 //                        if (!NetUtil.isNetworkAvailable(App.getAppContext())) {
-                        listener.onError(App.getAppContext().getString(R.string.load_error));
-
+                        listener.onError(MyUtils.analyzeNetworkError(e));
+//                        }
                     }
 
                     @Override

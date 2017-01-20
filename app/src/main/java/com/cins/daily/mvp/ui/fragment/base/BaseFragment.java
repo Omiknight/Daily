@@ -11,9 +11,11 @@ import com.cins.daily.App;
 import com.cins.daily.di.component.FragmentComponent;
 import com.cins.daily.di.module.FragmentModule;
 import com.cins.daily.mvp.presenter.base.BasePresenter;
+import com.cins.daily.utils.MyUtils;
 import com.squareup.leakcanary.RefWatcher;
 
 import butterknife.ButterKnife;
+import rx.Subscription;
 
 /**
  * Created by Eric on 2017/1/16.
@@ -24,10 +26,12 @@ public abstract class BaseFragment<T extends BasePresenter> extends Fragment {
     protected FragmentComponent mFragmentComponent;
     protected T mPresenter;
     private View mFragmentView;
+    protected Subscription mSubscription;
 
-    public abstract void initInjecor();
+    public abstract void initInjector();
     public abstract void initViews(View view);
     public abstract int getLayoutId();
+
 
     public FragmentComponent getFragmentComponent() {
         return mFragmentComponent;
@@ -39,7 +43,7 @@ public abstract class BaseFragment<T extends BasePresenter> extends Fragment {
                 .applicationComponent(((App) getActivity().getApplication()).getApplicationComponent())
                 .fragmentModule(new FragmentModule(this))
                 .build();
-        initInjecor();
+        initInjector();
     }
 
     @Nullable
@@ -54,12 +58,6 @@ public abstract class BaseFragment<T extends BasePresenter> extends Fragment {
     }
 
     @Override
-    public void onViewCreated(View view, @Nullable Bundle savedInstanceState) {
-        super.onViewCreated(view, savedInstanceState);
-        initViews(view);
-    }
-
-    @Override
     public void onDestroy() {
         super.onDestroy();
         RefWatcher refWatcher = App.getRefWatcher(getActivity());
@@ -67,5 +65,6 @@ public abstract class BaseFragment<T extends BasePresenter> extends Fragment {
         if (mPresenter != null) {
             mPresenter.onDestroy();
         }
+        MyUtils.cancelSubscription(mSubscription);
     }
 }

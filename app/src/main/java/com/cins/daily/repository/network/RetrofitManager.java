@@ -1,5 +1,6 @@
 package com.cins.daily.repository.network;
 
+import android.support.annotation.NonNull;
 import android.util.SparseArray;
 
 import com.cins.daily.App;
@@ -13,6 +14,7 @@ import com.socks.library.KLog;
 import java.io.File;
 import java.io.IOException;
 import java.util.List;
+import java.util.Locale;
 import java.util.Map;
 import java.util.concurrent.TimeUnit;
 
@@ -63,11 +65,11 @@ public class RetrofitManager {
         mNewsService = retrofit.create(NewsService.class);
     }
 
-    public OkHttpClient getOkHttpClient() {
+    private OkHttpClient getOkHttpClient() {
         if (sOkHttpClient == null) {
             synchronized (RetrofitManager.class){
                 Cache cache = new Cache(new File(App.getAppContext().getCacheDir(), "HttpCache"), 1024 * 1024 * 100);
-                if (sOkHttpClient == null)
+                if (sOkHttpClient == null) {
                     sOkHttpClient = new OkHttpClient.Builder().cache(cache)
                             .connectTimeout(6, TimeUnit.SECONDS)
                             .readTimeout(6, TimeUnit.SECONDS)
@@ -75,6 +77,7 @@ public class RetrofitManager {
                             .addInterceptor(mRewriteCacheControlInterceptor)
                             .addNetworkInterceptor(mRewriteCacheControlInterceptor)
                             .addInterceptor(mLoggingInterceptor).build();
+                }
             }
         }
         return sOkHttpClient;
@@ -92,6 +95,7 @@ public class RetrofitManager {
                 request = request.newBuilder()
                         .cacheControl(CacheControl.FORCE_CACHE)
                         .build();
+                KLog.d("no network");
             }
             Response originalResponse = chain.proceed(request);
             if (NetUtil.isNetworkAvailable()) {
@@ -114,11 +118,20 @@ public class RetrofitManager {
         @Override
         public Response intercept(Chain chain) throws IOException {
             Request request = chain.request();
+            long t1 = System.nanoTime();
+            KLog.i(String.format("Sending request %s on %s%n%s", request.url(), chain.connection(), request.headers()));
             Response response = chain.proceed(request);
+            long t2 = System.nanoTime();
+            KLog.i(String.format(Locale.getDefault(), "Received response for %s in %.1fms%n%s",
+                    response.request().url(), (t2 - t1) / 1e6d, response.headers()));
             return response;
         }
     };
 
+    /**
+     * @param hostType NETEASE_NEWS_VIDEO：1 （新闻，视频），GANK_GIRL_PHOTO：2（图片新闻）;
+     *                 EWS_DETAIL_HTML_PHOTO:3新闻详情html图片)
+     */
     public static RetrofitManager getInstance(int hostType) {
         RetrofitManager retrofitManager = sRetrofitManager.get(hostType);
         if (retrofitManager == null) {
@@ -133,6 +146,7 @@ public class RetrofitManager {
      * 根据网络状况获取缓存的策略
      * @return http缓存策略
      */
+    @NonNull
     private String getCacheControl() {
         return NetUtil.isNetworkAvailable() ? CACHE_CONTROL_AGE : CACHE_CONTROL_CACHE;
     }

@@ -1,18 +1,21 @@
 package com.cins.daily;
 
+import android.app.Activity;
 import android.app.Application;
 import android.content.Context;
 import android.database.sqlite.SQLiteDatabase;
+import android.os.Bundle;
 import android.os.StrictMode;
 import android.support.v7.app.AppCompatDelegate;
 
 import com.cins.daily.common.Constants;
-import com.cins.daily.di.component.AppComponent;
-import com.cins.daily.di.component.DaggerNewsComponent;
+import com.cins.daily.di.component.ApplicationComponent;
+import com.cins.daily.di.module.ApplicationModule;
 import com.cins.daily.greendao.DaoMaster;
 import com.cins.daily.greendao.DaoSession;
 import com.cins.daily.greendao.NewsChannelTableDao;
 import com.cins.daily.utils.MyUtils;
+import com.socks.library.KLog;
 import com.squareup.leakcanary.LeakCanary;
 import com.squareup.leakcanary.RefWatcher;
 
@@ -23,10 +26,12 @@ import de.greenrobot.dao.query.QueryBuilder;
  */
 
 public class App extends Application {
+
+    private ApplicationComponent mApplicationComponent;
     private RefWatcher mRefWatcher;
+
     private static Context sAppContext;
     private static DaoSession mDaoSession;
-    private static AppComponent mAppComponent;
 
     public static RefWatcher getRefWatcher(Context context) {
         App application = (App) context.getApplicationContext();
@@ -42,51 +47,83 @@ public class App extends Application {
         super.onCreate();
         sAppContext = this;
         initLeakCanary();
-        initDayNightMode();
+        initActivityLifecycleLogs();
         initStrictMode();
+        initDayNightMode();
+        KLog.init(BuildConfig.DEBUG);
         // 官方推荐将获取 DaoMaster 对象的方法放到 Application 层，这样将避免多次创建生成 Session 对象
         setupDatabase();
-        setupAppComponent();
+        initApplicationComponent();
     }
 
-    private void setupAppComponent() {
-        mAppComponent = DaggerNewsComponent.builder()
-                .appModule(new AppModule(this))
-                .build();
-        mAppComponent.inject(this);
-    }
-
-    public static AppComponent getAppComponent() {
-        return mAppComponent;
-    }
     private void initLeakCanary() {
         if (BuildConfig.DEBUG) {
             mRefWatcher = LeakCanary.install(this);
         } else {
             mRefWatcher = installLeakCanary();
         }
-
     }
 
+    /**
+     * release版本使用此方法
+     */
     protected RefWatcher installLeakCanary() {
         return RefWatcher.DISABLED;
     }
+
+    private void initActivityLifecycleLogs() {
+        this.registerActivityLifecycleCallbacks(new ActivityLifecycleCallbacks() {
+            @Override
+            public void onActivityCreated(Activity activity, Bundle savedInstanceState) {
+                KLog.v("=========", activity + "  onActivityCreated");
+            }
+
+            @Override
+            public void onActivityStarted(Activity activity) {
+                KLog.v("=========", activity + "  onActivityStarted");
+            }
+
+            @Override
+            public void onActivityResumed(Activity activity) {
+                KLog.v("=========", activity + "  onActivityResumed");
+            }
+
+            @Override
+            public void onActivityPaused(Activity activity) {
+                KLog.v("=========", activity + "  onActivityPaused");
+            }
+
+            @Override
+            public void onActivityStopped(Activity activity) {
+                KLog.v("=========", activity + "  onActivityStopped");
+            }
+
+            @Override
+            public void onActivitySaveInstanceState(Activity activity, Bundle outState) {
+                KLog.v("=========", activity + "  onActivitySaveInstanceState");
+            }
+
+            @Override
+            public void onActivityDestroyed(Activity activity) {
+                KLog.v("=========", activity + "  onActivityDestroyed");
+            }
+        });
+    }
+
     private void initStrictMode() {
         if (BuildConfig.DEBUG) {
             StrictMode.setThreadPolicy(
                     new StrictMode.ThreadPolicy.Builder()
                             .detectAll()
-                            .penaltyLog()
-                            .build()
-            );
+//                            .penaltyDialog() // 弹出违规提示对话框
+                            .penaltyLog() // 在logcat中打印违规异常信息
+                            .build());
             StrictMode.setVmPolicy(
                     new StrictMode.VmPolicy.Builder()
-                    .detectAll()
-                    .penaltyLog()
-                    .build()
-            );
+                            .detectAll()
+                            .penaltyLog()
+                            .build());
         }
-
     }
 
     private void initDayNightMode() {
@@ -95,14 +132,6 @@ public class App extends Application {
         } else {
             AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_NO);
         }
-    }
-
-    public static NewsChannelTableDao getNewsChannelTableDao() {
-        return mDaoSession.getNewsChannelTableDao();
-    }
-
-    public static boolean isHavePhoto() {
-        return MyUtils.getSharedPreferences().getBoolean(Constants.SHOW_NEWS_PHOTO, true);
     }
 
     private void setupDatabase() {
@@ -118,5 +147,24 @@ public class App extends Application {
         // 在 QueryBuilder 类中内置两个 Flag 用于方便输出执行的 SQL 语句与传递参数的值
         QueryBuilder.LOG_SQL = BuildConfig.DEBUG;
         QueryBuilder.LOG_VALUES = BuildConfig.DEBUG;
+    }
+
+    // Fixme
+    private void initApplicationComponent() {
+        mApplicationComponent = DaggerApplicationComponent.builder()
+                .applicationModule(new ApplicationModule(this))
+                .build();
+    }
+
+    public ApplicationComponent getApplicationComponent() {
+        return mApplicationComponent;
+    }
+
+    public static NewsChannelTableDao getNewsChannelTableDao() {
+        return mDaoSession.getNewsChannelTableDao();
+    }
+
+    public static boolean isHavePhoto() {
+        return MyUtils.getSharedPreferences().getBoolean(Constants.SHOW_NEWS_PHOTO, true);
     }
 }

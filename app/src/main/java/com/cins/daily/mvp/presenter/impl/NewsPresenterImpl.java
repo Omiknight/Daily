@@ -9,15 +9,17 @@ import com.cins.daily.mvp.view.NewsView;
 
 import java.util.List;
 
+import javax.inject.Inject;
+
 /**
  * Created by Eric on 2017/1/16.
  */
-
 public class NewsPresenterImpl extends BasePresenterImpl<NewsView, List<NewsChannelTable>>
        implements NewsPresenter {
 
     private NewsInteractor<List<NewsChannelTable>> mNewsInteractor;
 
+    @Inject
     public NewsPresenterImpl(NewsInteractorImpl newsInteractor) {
         mNewsInteractor = newsInteractor;
     }
@@ -25,6 +27,10 @@ public class NewsPresenterImpl extends BasePresenterImpl<NewsView, List<NewsChan
     @Override
     public void onCreate() {
         super.onCreate();
+        loadNewsChannels();
+    }
+
+    private void loadNewsChannels() {
         mSubscription = mNewsInteractor.lodeNewsChannels(this);
     }
 
@@ -32,5 +38,10 @@ public class NewsPresenterImpl extends BasePresenterImpl<NewsView, List<NewsChan
     public void success(List<NewsChannelTable> data) {
         super.success(data);
         mView.initViewPager(data);
+    }
+
+    @Override
+    public void onChannelDbChanged() {
+        loadNewsChannels();
     }
 }

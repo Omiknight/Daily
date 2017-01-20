@@ -22,7 +22,6 @@ public interface NewsService {
     Observable<Map<String, List<NewsSummary>>> getNewsList(
             @Header("Cache-Control")String cacheControl,
             @Path("type") String type,
-            @Path("id") String id,
             @Path("startPage") int startPage
     );
 

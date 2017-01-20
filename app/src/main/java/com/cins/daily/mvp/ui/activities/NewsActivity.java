@@ -20,9 +20,7 @@ import android.view.View;
 import com.cins.daily.R;
 import com.cins.daily.common.Constants;
 import com.cins.daily.di.component.DaggerNewsComponent;
-import com.cins.daily.di.module.NewsModule;
 import com.cins.daily.greendao.NewsChannelTable;
-import com.cins.daily.mvp.presenter.NewsPresenter;
 import com.cins.daily.mvp.presenter.impl.NewsPresenterImpl;
 import com.cins.daily.mvp.ui.activities.base.BaseActivity;
 import com.cins.daily.mvp.ui.fragment.NewsListFragment;
@@ -57,6 +55,21 @@ public class NewsActivity extends BaseActivity
     NewsPresenterImpl mNewsPresenter;
 
     private List<Fragment> mNewsFragmentList = new ArrayList<>();
+
+    @Override
+    public int getLayoutId() {
+        return 0;
+    }
+
+    @Override
+    public void initInjector() {
+
+    }
+
+    @Override
+    public void initViews() {
+
+    }
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {

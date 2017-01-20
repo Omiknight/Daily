@@ -32,9 +32,9 @@ public interface ActivityComponent {
 
     void inject(NewsChannelActivity newsChannelActivity);
 
-    void inject(NewsPhotoDetailActivity newsPhotoDetailActivity);
+    //void inject(NewsPhotoDetailActivity newsPhotoDetailActivity);
 
-    void inject(PhotoActivity photoActivity);
+    //void inject(PhotoActivity photoActivity);
 
-    void inject(PhotoDetailActivity photoDetailActivity);
+    //void inject(PhotoDetailActivity photoDetailActivity);
 }

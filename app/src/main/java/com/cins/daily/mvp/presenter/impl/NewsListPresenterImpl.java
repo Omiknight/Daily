@@ -11,6 +11,8 @@ import com.cins.daily.mvp.view.NewsListView;
 
 import java.util.List;
 
+import javax.inject.Inject;
+
 /**
  * Created by Eric on 2017/1/17.
  */
@@ -26,11 +28,7 @@ public class NewsListPresenterImpl extends BasePresenterImpl<NewsListView,List<N
     private boolean misFirstLoad;
     private boolean mIsRefresh = true;
 
-    /**
-     * 新闻页首次加载完毕
-     */
-    private boolean mIsLoaded;
-
+    @Inject
     public NewsListPresenterImpl(NewsListInteractorImpl newsListInteractor) {
         mNewsListInteractor = newsListInteractor;
     }
@@ -42,16 +40,10 @@ public class NewsListPresenterImpl extends BasePresenterImpl<NewsListView,List<N
         }
     }
 
-    private void loadNewsData() {
-        mSubscription = mNewsListInteractor.loadNews(this, mNewsType, mNewsId, mStartPage);
-    }
-
     @Override
-    public void success(List<NewsSummary> items) {
-        misFirstLoad = true;
-        if (mView != null) {
-            mView.setNewsList(items);
-            mView.hideProgress();
+    public void beforeRequest() {
+        if (!misFirstLoad) {
+            mView.showProgress();
         }
     }
 
@@ -64,10 +56,19 @@ public class NewsListPresenterImpl extends BasePresenterImpl<NewsListView,List<N
         }
     }
 
-
     @Override
-    public void onDestroy() {
-        mView = null;
+    public void success(List<NewsSummary> items) {
+        misFirstLoad = true;
+        if (items != null) {
+            mStartPage += 20;
+        }
+
+        int loadType = mIsRefresh ? LoadNewsType.TYPE_REFRESH_SUCCESS : LoadNewsType.TYPE_LOAD_MORE_SUCCESS;
+        if (mView != null) {
+            mView.setNewsList(items, loadType);
+            mView.hideProgress();
+        }
+
     }
 
     @Override
@@ -87,5 +88,9 @@ public class NewsListPresenterImpl extends BasePresenterImpl<NewsListView,List<N
     public void loadMore() {
         mIsRefresh = false;
         loadNewsData();
+    }
+
+    private void loadNewsData() {
+        mSubscription = mNewsListInteractor.loadNews(this, mNewsType, mNewsId, mStartPage);
     }
 }

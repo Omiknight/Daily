@@ -4,15 +4,14 @@ import android.support.annotation.NonNull;
 
 import com.cins.daily.listener.RequestCallBack;
 import com.cins.daily.mvp.view.base.BaseView;
+import com.cins.daily.utils.MyUtils;
 
 import rx.Subscription;
 
 /**
  * Created by Eric on 2017/1/17.
  */
-
-public class BasePresenterImpl<T extends BaseView, E> implements BasePresenter ,RequestCallBack<E> {
-
+public class BasePresenterImpl<T extends BaseView, E> implements BasePresenter, RequestCallBack<E> {
     protected T mView;
     protected Subscription mSubscription;
 
@@ -22,25 +21,28 @@ public class BasePresenterImpl<T extends BaseView, E> implements BasePresenter ,
     }
 
     @Override
+    public void onDestroy() {
+        MyUtils.cancelSubscription(mSubscription);
+    }
+
+    @Override
     public void attachView(@NonNull BaseView view) {
         mView = (T) view;
     }
 
     @Override
-    public void onDestroy() {
-        if (mSubscription != null && !mSubscription.isUnsubscribed()) {
-            mSubscription.unsubscribe();
-        }
+    public void beforeRequest() {
+        mView.showProgress();
     }
 
     @Override
     public void success(E data) {
-        mView.showProgress();
+        mView.hideProgress();
     }
 
     @Override
     public void onError(String errorMsg) {
-        mView.showProgress();
-        mView.showErrorMsg(errorMsg);
+        mView.hideProgress();
+        mView.showMsg(errorMsg);
     }
 }

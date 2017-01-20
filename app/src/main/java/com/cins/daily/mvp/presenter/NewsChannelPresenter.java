@@ -1,5 +1,6 @@
 package com.cins.daily.mvp.presenter;
 
+import com.cins.daily.greendao.NewsChannelTable;
 import com.cins.daily.mvp.presenter.base.BasePresenter;
 
 /**
@@ -7,4 +8,7 @@ import com.cins.daily.mvp.presenter.base.BasePresenter;
  */
 
 public interface NewsChannelPresenter extends BasePresenter {
+    void onItemSwap(int fromPosition, int toPosition);
+
+    void onItemAddOrRemove(NewsChannelTable newsChannel, boolean isChannelMine);
 }

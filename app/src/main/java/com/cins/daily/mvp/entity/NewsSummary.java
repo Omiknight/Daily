@@ -34,19 +34,20 @@ public class NewsSummary {
     private String imgsrc;
     private String tname;
     private String ptime;
+    /**
+     * title : "悬崖村" 孩子上学需爬800米悬崖
+     * tag : photoset
+     * imgsrc : http://img1.cache.netease.com/3g/2016/5/24/2016052421435478ea5.jpg
+     * subtitle :
+     * url : 00AP0001|119327
+     */
 
     private List<AdsBean> ads;
+    /**
+     * imgsrc : http://img3.cache.netease.com/3g/2016/5/24/2016052416484243560.jpg
+     */
 
     private List<ImgextraBean> imgextra;
-
-
-    public boolean isHasCover() {
-        return hasCover;
-    }
-
-    public void setHasCover(boolean hasCover) {
-        this.hasCover = hasCover;
-    }
 
     public String getPostid() {
         return postid;
@@ -54,6 +55,14 @@ public class NewsSummary {
 
     public void setPostid(String postid) {
         this.postid = postid;
+    }
+
+    public boolean isHasCover() {
+        return hasCover;
+    }
+
+    public void setHasCover(boolean hasCover) {
+        this.hasCover = hasCover;
     }
 
     public int getHasHead() {

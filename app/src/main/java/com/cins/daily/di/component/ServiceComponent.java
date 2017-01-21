@@ -2,7 +2,7 @@ package com.cins.daily.di.component;
 
 import android.content.Context;
 
-import com.cins.daily.di.module.ServiceModule.ServiceModule;
+import com.cins.daily.di.module.ServiceModule;
 import com.cins.daily.di.scope.ContextLife;
 import com.cins.daily.di.scope.PerService;
 

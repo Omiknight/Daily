@@ -6,9 +6,9 @@ import android.support.v7.widget.DefaultItemAnimator;
 import android.support.v7.widget.GridLayoutManager;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
+import android.support.v7.widget.Toolbar;
 import android.support.v7.widget.helper.ItemTouchHelper;
 import android.view.View;
-import android.widget.Toolbar;
 
 import com.cins.daily.R;
 import com.cins.daily.event.ChannelItemMoveEvent;
@@ -28,11 +28,13 @@ import javax.inject.Inject;
 import butterknife.BindView;
 import rx.functions.Action1;
 
+
 /**
  * Created by Eric on 2017/1/19.
  */
 
 public class NewsChannelActivity extends BaseActivity implements NewsChannelView {
+
     @BindView(R.id.toolbar)
     Toolbar mToolbar;
     @BindView(R.id.news_channel_mine_rv)

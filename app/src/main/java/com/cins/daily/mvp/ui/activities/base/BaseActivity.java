@@ -2,37 +2,45 @@ package com.cins.daily.mvp.ui.activities.base;
 
 import android.annotation.TargetApi;
 import android.content.Context;
+import android.content.Intent;
 import android.graphics.PixelFormat;
 import android.os.Build;
 import android.os.Bundle;
 import android.support.design.widget.NavigationView;
-import android.support.v4.app.NotificationCompatSideChannelService;
+import android.support.v4.view.GravityCompat;
+import android.support.v4.view.MenuItemCompat;
+import android.support.v4.widget.DrawerLayout;
+import android.support.v7.app.ActionBarDrawerToggle;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.app.AppCompatDelegate;
+import android.support.v7.widget.SwitchCompat;
 import android.support.v7.widget.Toolbar;
+import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.WindowManager;
+import android.widget.CompoundButton;
+import android.widget.Toast;
 
 import com.cins.daily.App;
 import com.cins.daily.R;
 import com.cins.daily.di.component.ActivityComponent;
+import com.cins.daily.di.component.DaggerActivityComponent;
 import com.cins.daily.di.module.ActivityModule;
 import com.cins.daily.mvp.presenter.base.BasePresenter;
 import com.cins.daily.mvp.ui.activities.NewsActivity;
 import com.cins.daily.mvp.ui.activities.NewsDetailActivity;
 import com.cins.daily.utils.MyUtils;
 import com.cins.daily.utils.NetUtil;
+import com.socks.library.KLog;
 import com.squareup.leakcanary.RefWatcher;
 
 import butterknife.ButterKnife;
 import rx.Subscription;
 
-
 /**
  * Created by Eric on 2017/1/16.
  */
-
 public abstract class BaseActivity<T extends BasePresenter> extends AppCompatActivity {
     protected ActivityComponent mActivityComponent;
     private boolean mIsChangeTheme;
@@ -45,9 +53,14 @@ public abstract class BaseActivity<T extends BasePresenter> extends AppCompatAct
     private View mNightView = null;
     private boolean mIsAddedView;
     protected T mPresenter;
+    protected boolean mIsHasNavigationView;
+    private DrawerLayout mDrawerLayout;
+    private Class mClass;
 
     public abstract int getLayoutId();
+
     public abstract void initInjector();
+
     public abstract void initViews();
 
     protected Subscription mSubscription;
@@ -56,9 +69,11 @@ public abstract class BaseActivity<T extends BasePresenter> extends AppCompatAct
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-
+        KLog.i(getClass().getSimpleName());
+        //initAnnotation();
         NetUtil.isNetworkErrThenShowMsg();
-
+        initActivityComponent();
+        //setStatusBarTranslucent();
         setNightOrDayMode();
 
         int layoutId = getLayoutId();
@@ -67,10 +82,14 @@ public abstract class BaseActivity<T extends BasePresenter> extends AppCompatAct
         ButterKnife.bind(this);
         initToolBar();
         initViews();
-        mPresenter.onCreate();
+        if (mIsHasNavigationView) {
+            initDrawerLayout();
+        }
+        if (mPresenter != null) {
+            mPresenter.onCreate();
+        }
+        initNightModeSwitch();
     }
-
-        //initNightModeSwitch();
 
 /*
     private void initAnnotation() {
@@ -79,9 +98,10 @@ public abstract class BaseActivity<T extends BasePresenter> extends AppCompatAct
             mIsHasNavigationView = annotation.mIsHasNavigationView();
         }
     }
+*/
 
     private void initNightModeSwitch() {
-        if (this instanceof NewsActivity || this instanceof PhotoActivity) {
+        if (this instanceof NewsActivity ) {
             MenuItem menuNightMode = mBaseNavView.getMenu().findItem(R.id.nav_night_mode);
             SwitchCompat dayNightSwitch = (SwitchCompat) MenuItemCompat
                     .getActionView(menuNightMode);
@@ -122,14 +142,12 @@ public abstract class BaseActivity<T extends BasePresenter> extends AppCompatAct
                 .activityModule(new ActivityModule(this))
                 .build();
     }
-*/
 
 
     private void initToolBar() {
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
     }
-/*
 
     private void initDrawerLayout() {
 
@@ -195,7 +213,6 @@ public abstract class BaseActivity<T extends BasePresenter> extends AppCompatAct
             super.onBackPressed();
         }
     }
-*/
 
     private void setNightOrDayMode() {
         if (MyUtils.isNightMode()) {
@@ -207,8 +224,8 @@ public abstract class BaseActivity<T extends BasePresenter> extends AppCompatAct
             AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_NO);
         }
     }
-/*
 
+/*
     // TODO:适配4.4
     @TargetApi(Build.VERSION_CODES.KITKAT)
     protected void setStatusBarTranslucent() {
@@ -242,18 +259,26 @@ public abstract class BaseActivity<T extends BasePresenter> extends AppCompatAct
         if (mIsAddedView) {
             return;
         }
-        //增加夜间模式蒙版
+        // 增加夜间模式蒙板
         WindowManager.LayoutParams nightViewParam = new WindowManager.LayoutParams(
                 WindowManager.LayoutParams.TYPE_APPLICATION,
                 WindowManager.LayoutParams.FLAG_NOT_TOUCHABLE | WindowManager.LayoutParams.FLAG_NOT_FOCUSABLE,
-                PixelFormat.TRANSPARENT
-        );
+                PixelFormat.TRANSPARENT);
         mWindowManager = (WindowManager) getSystemService(Context.WINDOW_SERVICE);
         mNightView = new View(this);
         mWindowManager.addView(mNightView, nightViewParam);
         mIsAddedView = true;
     }
 
+    @Override
+    protected void onNewIntent(Intent intent) {
+        super.onNewIntent(intent);
+        setIntent(intent);
+        if (mIsHasNavigationView) {
+            overridePendingTransition(0, 0);
+        }
+//        getWindow().getDecorView().invalidate();
+    }
 
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
@@ -267,6 +292,15 @@ public abstract class BaseActivity<T extends BasePresenter> extends AppCompatAct
                 break;
         }
         return super.onOptionsItemSelected(item);
+    }
+
+    @Override
+    public boolean onCreateOptionsMenu(Menu menu) {
+        if (mIsHasNavigationView) {
+            getMenuInflater().inflate(R.menu.main, menu);
+            return true;
+        }
+        return super.onCreateOptionsMenu(menu);
     }
 
     @Override

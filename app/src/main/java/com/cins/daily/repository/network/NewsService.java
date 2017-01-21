@@ -20,16 +20,15 @@ import rx.Observable;
 public interface NewsService {
     @GET("nc/article/{type}/{id}/{startPage}-20.html")
     Observable<Map<String, List<NewsSummary>>> getNewsList(
-            @Header("Cache-Control")String cacheControl,
+            @Header("Cache-Control") String cacheControl,
             @Path("type") String type,
-            @Path("startPage") int startPage
-    );
+            @Path("id") String id,
+            @Path("startPage") int startPage);
 
     @GET("nc/article/{postId}/full.html")
     Observable<Map<String, NewsDetail>> getNewDetail(
             @Header("Cache-Control") String cacheControl,
-            @Path("postId") String postId
-    );
+            @Path("postId") String postId);
 
     @GET
     Observable<ResponseBody> getNewsBodyHtmlPhoto(

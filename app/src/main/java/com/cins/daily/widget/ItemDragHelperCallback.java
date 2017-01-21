@@ -8,8 +8,7 @@ import android.support.v7.widget.helper.ItemTouchHelper;
 /**
  * Created by Eric on 2017/1/20.
  */
-
-public class ItemDragHelperCallback extends ItemTouchHelper.Callback{
+public class ItemDragHelperCallback extends ItemTouchHelper.Callback {
     private OnItemMoveListener mOnItemMoveListener;
     private boolean mIsLongPressEnabled;
 

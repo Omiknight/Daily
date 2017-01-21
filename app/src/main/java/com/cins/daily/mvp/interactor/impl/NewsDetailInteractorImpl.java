@@ -1,7 +1,6 @@
 package com.cins.daily.mvp.interactor.impl;
 
 import com.cins.daily.App;
-import com.cins.daily.R;
 import com.cins.daily.common.HostType;
 import com.cins.daily.listener.RequestCallBack;
 import com.cins.daily.mvp.entity.NewsDetail;
@@ -18,9 +17,7 @@ import javax.inject.Inject;
 
 import rx.Observer;
 import rx.Subscription;
-import rx.android.schedulers.AndroidSchedulers;
 import rx.functions.Func1;
-import rx.schedulers.Schedulers;
 
 /**
  * Created by Eric on 2017/1/18.

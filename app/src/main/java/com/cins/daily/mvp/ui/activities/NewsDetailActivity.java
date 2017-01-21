@@ -148,7 +148,7 @@ public class NewsDetailActivity extends BaseActivity implements NewsDetailView {
                     public void onCompleted() {
                         mProgressBar.setVisibility(View.GONE);
                         mFab.setVisibility(View.VISIBLE);
-                        YoYo.with(Techniques.RollIn).playOn(mFab);
+
                     }
 
                     @Override

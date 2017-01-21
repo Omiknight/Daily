@@ -1,11 +1,13 @@
 package com.cins.daily.mvp.ui.adapter.base;
 
+import android.support.annotation.AnimRes;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.StaggeredGridLayoutManager;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.animation.Animation;
+import android.view.animation.AnimationUtils;
 
 import com.cins.daily.listener.OnItemClickListener;
 
@@ -15,7 +17,7 @@ import java.util.List;
  * Created by Eric on 2017/1/20.
  */
 
-public class BaseRecyclerViewAdapter<T> extends RecyclerView.Adapter<RecyclerView.ViewHolder>{
+public class BaseRecyclerViewAdapter<T> extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
     public static final int TYPE_ITEM = 0;
     public static final int TYPE_FOOTER = 1;
     protected int mLastPosition = -1;

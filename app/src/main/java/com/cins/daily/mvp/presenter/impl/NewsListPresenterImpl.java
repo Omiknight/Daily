@@ -17,8 +17,8 @@ import javax.inject.Inject;
  * Created by Eric on 2017/1/17.
  */
 
-public class NewsListPresenterImpl extends BasePresenterImpl<NewsListView,List<NewsSummary>>
-        implements NewsListPresenter,RequestCallBack<List<NewsSummary>>{
+public class NewsListPresenterImpl extends BasePresenterImpl<NewsListView, List<NewsSummary>>
+        implements NewsListPresenter, RequestCallBack<List<NewsSummary>> {
 
     private NewsListInteractor<List<NewsSummary>> mNewsListInteractor;
     private String mNewsType;

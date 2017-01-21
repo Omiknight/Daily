@@ -10,6 +10,7 @@ import android.support.v7.app.AppCompatDelegate;
 
 import com.cins.daily.common.Constants;
 import com.cins.daily.di.component.ApplicationComponent;
+import com.cins.daily.di.component.DaggerApplicationComponent;
 import com.cins.daily.di.module.ApplicationModule;
 import com.cins.daily.greendao.DaoMaster;
 import com.cins.daily.greendao.DaoSession;

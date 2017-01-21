@@ -11,13 +11,12 @@ import java.util.List;
  * Created by Eric on 2017/1/19.
  */
 
-public class NewsFragmentPagerAdapter extends FragmentPagerAdapter{
+public class NewsFragmentPagerAdapter extends FragmentPagerAdapter {
 
     private final List<String> mTitles;
     private List<Fragment> mNewsFragmentList = new ArrayList<>();
 
-
-    public NewsFragmentPagerAdapter(FragmentManager fm,List<String> titles,List<Fragment> newsFragmentList) {
+    public NewsFragmentPagerAdapter(FragmentManager fm, List<String> titles,List<Fragment> newsFragmentList) {
         super(fm);
         mTitles = titles;
         mNewsFragmentList = newsFragmentList;

@@ -3,7 +3,6 @@ package com.cins.daily.mvp.ui.fragment;
 import android.annotation.TargetApi;
 import android.app.Activity;
 import android.app.ActivityOptions;
-import android.content.Context;
 import android.content.Intent;
 import android.os.Build;
 import android.os.Bundle;
@@ -12,7 +11,6 @@ import android.support.annotation.Nullable;
 import android.support.design.widget.Snackbar;
 import android.support.v4.app.ActivityCompat;
 import android.support.v4.app.ActivityOptionsCompat;
-import android.support.v4.content.ContextCompat;
 import android.support.v4.widget.SwipeRefreshLayout;
 import android.support.v7.widget.DefaultItemAnimator;
 import android.support.v7.widget.LinearLayoutManager;
@@ -21,21 +19,16 @@ import android.view.View;
 import android.widget.ImageView;
 import android.widget.ProgressBar;
 import android.widget.TextView;
-import android.widget.Toast;
 
-import com.cins.daily.App;
 import com.cins.daily.R;
 import com.cins.daily.common.Constants;
 import com.cins.daily.common.LoadNewsType;
-import com.cins.daily.di.scope.ContextLife;
-import com.cins.daily.listener.OnItemClickListener;
+import com.cins.daily.mvp.entity.NewsPhotoDetail;
 import com.cins.daily.mvp.entity.NewsSummary;
 
 import com.cins.daily.mvp.presenter.impl.NewsListPresenterImpl;
-import com.cins.daily.mvp.presenter.impl.NewsPresenterImpl;
 import com.cins.daily.mvp.ui.activities.NewsDetailActivity;
 import com.cins.daily.mvp.ui.adapter.NewsListAdapter;
-import com.cins.daily.mvp.ui.adapter.NewsRecyclerViewAdapter;
 import com.cins.daily.mvp.ui.fragment.base.BaseFragment;
 import com.cins.daily.mvp.view.NewsListView;
 import com.cins.daily.utils.NetUtil;
@@ -44,9 +37,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import javax.inject.Inject;
-
 import butterknife.BindView;
-import butterknife.ButterKnife;
 import butterknife.OnClick;
 
 /**
@@ -224,7 +215,6 @@ public class NewsListFragment extends BaseFragment implements NewsListView, News
     public void onItemClick(View view, int position, boolean isPhoto) {
         if (isPhoto) {
 
-            goToPhotoDetailActivity(newsPhotoDetail);
         } else {
             goToNewsDetailActivity(view, position);
         }
@@ -266,11 +256,7 @@ public class NewsListFragment extends BaseFragment implements NewsListView, News
         pictureList.add(picture);
     }
 
-    private void goToPhotoDetailActivity(NewsPhotoDetail newsPhotoDetail) {
-        Intent intent = new Intent(getActivity(), NewsPhotoDetailActivity.class);
-        intent.putExtra(Constants.PHOTO_DETAIL, newsPhotoDetail);
-        startActivity(intent);
-    }
+
 
     private void goToNewsDetailActivity(View view, int position) {
         Intent intent = setIntent(position);

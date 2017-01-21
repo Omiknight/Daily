@@ -7,12 +7,13 @@ import android.support.v4.app.Fragment;
 import com.cins.daily.di.scope.ContextLife;
 import com.cins.daily.di.scope.PerFragment;
 
+import dagger.Module;
 import dagger.Provides;
 
 /**
  * Created by Eric on 2017/1/19.
  */
-
+@Module
 public class FragmentModule {
     private Fragment mFragment;
 

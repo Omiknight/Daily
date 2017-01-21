@@ -67,7 +67,7 @@ public class RetrofitManager {
 
     private OkHttpClient getOkHttpClient() {
         if (sOkHttpClient == null) {
-            synchronized (RetrofitManager.class){
+            synchronized (RetrofitManager.class) {
                 Cache cache = new Cache(new File(App.getAppContext().getCacheDir(), "HttpCache"), 1024 * 1024 * 100);
                 if (sOkHttpClient == null) {
                     sOkHttpClient = new OkHttpClient.Builder().cache(cache)

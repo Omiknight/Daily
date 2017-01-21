@@ -8,6 +8,7 @@ import android.view.View;
 import android.view.ViewGroup;
 
 import com.cins.daily.App;
+
 import com.cins.daily.di.component.FragmentComponent;
 import com.cins.daily.di.module.FragmentModule;
 import com.cins.daily.mvp.presenter.base.BasePresenter;
@@ -23,26 +24,27 @@ import rx.Subscription;
 
 public abstract class BaseFragment<T extends BasePresenter> extends Fragment {
 
-    protected FragmentComponent mFragmentComponent;
-    protected T mPresenter;
-    private View mFragmentView;
-    protected Subscription mSubscription;
-
-    public abstract void initInjector();
-    public abstract void initViews(View view);
-    public abstract int getLayoutId();
-
-
     public FragmentComponent getFragmentComponent() {
         return mFragmentComponent;
     }
+
+    protected FragmentComponent mFragmentComponent;
+    protected T mPresenter;
+
+    private View mFragmentView;
+
+    public abstract void initInjector();
+
+    public abstract void initViews(View view);
+
+    public abstract int getLayoutId();
+
+    protected Subscription mSubscription;
+
     @Override
     public void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        mFragmentComponent = DaggerFragmentComponent.builder()
-                .applicationComponent(((App) getActivity().getApplication()).getApplicationComponent())
-                .fragmentModule(new FragmentModule(this))
-                .build();
+
         initInjector();
     }
 

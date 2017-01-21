@@ -1,13 +1,14 @@
 <?xml version="1.0" encoding="utf-8"?>
-<android.support.v4.widget.NestedScrollView xmlns:android="http://schemas.android.com/apk/res/android"
-              android:layout_width="match_parent"
-              android:layout_height="match_parent"
-              xmlns:tools="http://schemas.android.com/tools"
-              xmlns:app="http://schemas.android.com/apk/res-auto"
-              android:background="@color/container_background"
-              app:layout_behavior="@string/appbar_scrolling_view_behavior"
-              tools:context=".mvp.ui.activities.NewsDetailActivity"
-              tools:showIn="@layout/activity_news_detail">
+<android.support.v4.widget.NestedScrollView
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@color/container_background"
+    app:layout_behavior="@string/appbar_scrolling_view_behavior"
+    tools:context=".mvp.ui.activities.NewsDetailActivity"
+    tools:showIn="@layout/activity_news_detail">
 
     <RelativeLayout
         android:layout_width="match_parent"

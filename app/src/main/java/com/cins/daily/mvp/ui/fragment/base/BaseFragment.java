@@ -8,7 +8,7 @@ import android.view.View;
 import android.view.ViewGroup;
 
 import com.cins.daily.App;
-
+import com.cins.daily.di.component.DaggerFragmentComponent;
 import com.cins.daily.di.component.FragmentComponent;
 import com.cins.daily.di.module.FragmentModule;
 import com.cins.daily.mvp.presenter.base.BasePresenter;
@@ -44,7 +44,10 @@ public abstract class BaseFragment<T extends BasePresenter> extends Fragment {
     @Override
     public void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-
+        mFragmentComponent = DaggerFragmentComponent.builder()
+                .applicationComponent(((App) getActivity().getApplication()).getApplicationComponent())
+                .fragmentModule(new FragmentModule(this))
+                .build();
         initInjector();
     }
 

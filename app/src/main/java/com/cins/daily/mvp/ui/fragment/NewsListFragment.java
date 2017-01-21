@@ -23,15 +23,16 @@ import android.widget.TextView;
 import com.cins.daily.R;
 import com.cins.daily.common.Constants;
 import com.cins.daily.common.LoadNewsType;
+import com.cins.daily.event.ScrollToTopEvent;
 import com.cins.daily.mvp.entity.NewsPhotoDetail;
 import com.cins.daily.mvp.entity.NewsSummary;
-
 import com.cins.daily.mvp.presenter.impl.NewsListPresenterImpl;
 import com.cins.daily.mvp.ui.activities.NewsDetailActivity;
 import com.cins.daily.mvp.ui.adapter.NewsListAdapter;
 import com.cins.daily.mvp.ui.fragment.base.BaseFragment;
 import com.cins.daily.mvp.view.NewsListView;
 import com.cins.daily.utils.NetUtil;
+import com.cins.daily.utils.RxBus;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -39,6 +40,9 @@ import java.util.List;
 import javax.inject.Inject;
 import butterknife.BindView;
 import butterknife.OnClick;
+import rx.functions.Action1;
+
+import static android.support.v7.widget.RecyclerView.LayoutManager;
 
 /**
  * Created by Eric on 2017/1/16.
@@ -76,6 +80,7 @@ public class NewsListFragment extends BaseFragment implements NewsListView, News
         initSwipeRefreshLayout();
         initRecyclerView();
         initPresenter();
+        registerScrollToTopEvent();
     }
 
     private void initSwipeRefreshLayout() {
@@ -91,6 +96,15 @@ public class NewsListFragment extends BaseFragment implements NewsListView, News
         mPresenter.onCreate();
     }
 
+    private void registerScrollToTopEvent() {
+        mSubscription = RxBus.getInstance().toObservable(ScrollToTopEvent.class)
+                .subscribe(new Action1<ScrollToTopEvent>() {
+                    @Override
+                    public void call(ScrollToTopEvent scrollToTopEvent) {
+                        mNewsRv.getLayoutManager().scrollToPosition(0);
+                    }
+                });
+    }
 
     private void initRecyclerView() {
         mNewsRv.setHasFixedSize(true);
@@ -101,7 +115,7 @@ public class NewsListFragment extends BaseFragment implements NewsListView, News
             @Override
             public void onScrollStateChanged(RecyclerView recyclerView, int newState) {
                 super.onScrollStateChanged(recyclerView, newState);
-                RecyclerView.LayoutManager layoutManager = recyclerView.getLayoutManager();
+                LayoutManager layoutManager = recyclerView.getLayoutManager();
 
                 int lastVisibleItemPosition = ((LinearLayoutManager) layoutManager)
                         .findLastVisibleItemPosition();

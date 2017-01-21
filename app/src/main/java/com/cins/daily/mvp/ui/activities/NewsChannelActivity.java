@@ -17,9 +17,9 @@ import com.cins.daily.listener.OnItemClickListener;
 import com.cins.daily.mvp.presenter.impl.NewsChannelPresenterImpl;
 import com.cins.daily.mvp.ui.activities.base.BaseActivity;
 import com.cins.daily.mvp.ui.adapter.NewsChannelAdapter;
+import com.cins.daily.widget.ItemDragHelperCallback;
 import com.cins.daily.mvp.view.NewsChannelView;
 import com.cins.daily.utils.RxBus;
-import com.cins.daily.widget.ItemDragHelperCallback;
 
 import java.util.List;
 
@@ -27,7 +27,6 @@ import javax.inject.Inject;
 
 import butterknife.BindView;
 import rx.functions.Action1;
-
 
 /**
  * Created by Eric on 2017/1/19.

@@ -13,8 +13,10 @@ import android.support.v7.widget.Toolbar;
 import android.view.View;
 
 import com.cins.daily.R;
+import com.cins.daily.annotation.BindValues;
 import com.cins.daily.common.Constants;
 import com.cins.daily.event.ChannelChangeEvent;
+import com.cins.daily.event.ScrollToTopEvent;
 import com.cins.daily.greendao.NewsChannelTable;
 import com.cins.daily.mvp.presenter.impl.NewsPresenterImpl;
 import com.cins.daily.mvp.ui.activities.base.BaseActivity;
@@ -33,6 +35,7 @@ import butterknife.BindView;
 import butterknife.OnClick;
 import rx.functions.Action1;
 
+@BindValues(mIsHasNavigationView = true)
 public class NewsActivity extends BaseActivity implements NewsView {
 
     private String mCurrentViewPagerName;
@@ -114,10 +117,10 @@ public class NewsActivity extends BaseActivity implements NewsView {
 
     private void setNewsList(List<NewsChannelTable> newsChannels, List<String> channelNames) {
         mNewsFragmentList.clear();
-        for (NewsChannelTable newsChannelTable : newsChannels) {
-            NewsListFragment newsListFragment = createListFragments(newsChannelTable);
+        for (NewsChannelTable newsChannel : newsChannels) {
+            NewsListFragment newsListFragment = createListFragments(newsChannel);
             mNewsFragmentList.add(newsListFragment);
-            channelNames.add(newsChannelTable.getNewsChannelName());
+            channelNames.add(newsChannel.getNewsChannelName());
         }
     }
 

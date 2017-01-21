@@ -24,6 +24,7 @@ import android.widget.Toast;
 
 import com.cins.daily.App;
 import com.cins.daily.R;
+import com.cins.daily.annotation.BindValues;
 import com.cins.daily.di.component.ActivityComponent;
 import com.cins.daily.di.component.DaggerActivityComponent;
 import com.cins.daily.di.module.ActivityModule;
@@ -32,6 +33,7 @@ import com.cins.daily.mvp.ui.activities.NewsActivity;
 import com.cins.daily.mvp.ui.activities.NewsDetailActivity;
 import com.cins.daily.utils.MyUtils;
 import com.cins.daily.utils.NetUtil;
+import com.readystatesoftware.systembartint.SystemBarTintManager;
 import com.socks.library.KLog;
 import com.squareup.leakcanary.RefWatcher;
 
@@ -70,10 +72,10 @@ public abstract class BaseActivity<T extends BasePresenter> extends AppCompatAct
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         KLog.i(getClass().getSimpleName());
-        //initAnnotation();
+        initAnnotation();
         NetUtil.isNetworkErrThenShowMsg();
         initActivityComponent();
-        //setStatusBarTranslucent();
+        setStatusBarTranslucent();
         setNightOrDayMode();
 
         int layoutId = getLayoutId();
@@ -88,20 +90,19 @@ public abstract class BaseActivity<T extends BasePresenter> extends AppCompatAct
         if (mPresenter != null) {
             mPresenter.onCreate();
         }
+
         initNightModeSwitch();
     }
 
-/*
     private void initAnnotation() {
         if (getClass().isAnnotationPresent(BindValues.class)) {
             BindValues annotation = getClass().getAnnotation(BindValues.class);
             mIsHasNavigationView = annotation.mIsHasNavigationView();
         }
     }
-*/
 
     private void initNightModeSwitch() {
-        if (this instanceof NewsActivity ) {
+        if (this instanceof NewsActivity /*|| this instanceof PhotoActivity*/) {
             MenuItem menuNightMode = mBaseNavView.getMenu().findItem(R.id.nav_night_mode);
             SwitchCompat dayNightSwitch = (SwitchCompat) MenuItemCompat
                     .getActionView(menuNightMode);
@@ -169,7 +170,7 @@ public abstract class BaseActivity<T extends BasePresenter> extends AppCompatAct
                             mClass = NewsActivity.class;
                             break;
                         case R.id.nav_photo:
-                            mClass = PhotoActivity.class;
+                            //mClass = PhotoActivity.class;
                             break;
                         case R.id.nav_video:
                             Toast.makeText(BaseActivity.this, "施工准备中...", Toast.LENGTH_SHORT).show();
@@ -225,13 +226,12 @@ public abstract class BaseActivity<T extends BasePresenter> extends AppCompatAct
         }
     }
 
-/*
     // TODO:适配4.4
     @TargetApi(Build.VERSION_CODES.KITKAT)
     protected void setStatusBarTranslucent() {
         if ((Build.VERSION.SDK_INT >= Build.VERSION_CODES.KITKAT &&
-                !(this instanceof NewsDetailActivity || this instanceof PhotoActivity
-                        || this instanceof PhotoDetailActivity))
+                !(this instanceof NewsDetailActivity /*|| this instanceof PhotoActivity
+                        || this instanceof PhotoDetailActivity*/))
                 || (Build.VERSION.SDK_INT == Build.VERSION_CODES.KITKAT
                 && this instanceof NewsDetailActivity)) {
             getWindow().addFlags(WindowManager.LayoutParams.FLAG_TRANSLUCENT_STATUS);
@@ -240,7 +240,6 @@ public abstract class BaseActivity<T extends BasePresenter> extends AppCompatAct
             tintManager.setStatusBarTintResource(R.color.colorPrimary);
         }
     }
-*/
 
     public void changeToDay() {
 //        AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_YES);
@@ -283,7 +282,7 @@ public abstract class BaseActivity<T extends BasePresenter> extends AppCompatAct
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
         switch (item.getItemId()) {
-            case R.id.home:
+            case android.R.id.home:
                 if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
                     finishAfterTransition();
                 } else {

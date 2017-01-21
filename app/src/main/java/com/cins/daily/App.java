@@ -25,23 +25,18 @@ import de.greenrobot.dao.query.QueryBuilder;
 /**
  * Created by Eric on 2017/1/16.
  */
-
 public class App extends Application {
 
-    private ApplicationComponent mApplicationComponent;
-    private RefWatcher mRefWatcher;
-
-    private static Context sAppContext;
-    private static DaoSession mDaoSession;
+    private  ApplicationComponent mApplicationComponent;
+    private RefWatcher refWatcher;
 
     public static RefWatcher getRefWatcher(Context context) {
         App application = (App) context.getApplicationContext();
-        return application.mRefWatcher;
+        return application.refWatcher;
     }
 
-    public static Context getAppContext() {
-        return sAppContext;
-    }
+    private static Context sAppContext;
+    private static DaoSession mDaoSession;
 
     @Override
     public void onCreate() {
@@ -59,9 +54,9 @@ public class App extends Application {
 
     private void initLeakCanary() {
         if (BuildConfig.DEBUG) {
-            mRefWatcher = LeakCanary.install(this);
+            refWatcher = LeakCanary.install(this);
         } else {
-            mRefWatcher = installLeakCanary();
+            refWatcher = installLeakCanary();
         }
     }
 
@@ -148,6 +143,10 @@ public class App extends Application {
         // 在 QueryBuilder 类中内置两个 Flag 用于方便输出执行的 SQL 语句与传递参数的值
         QueryBuilder.LOG_SQL = BuildConfig.DEBUG;
         QueryBuilder.LOG_VALUES = BuildConfig.DEBUG;
+    }
+
+    public static Context getAppContext() {
+        return sAppContext;
     }
 
     // Fixme

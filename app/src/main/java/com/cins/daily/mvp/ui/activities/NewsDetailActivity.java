@@ -1,7 +1,6 @@
 package com.cins.daily.mvp.ui.activities;
 
 import android.content.Intent;
-import android.graphics.Bitmap;
 import android.net.Uri;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
@@ -33,6 +32,8 @@ import com.cins.daily.utils.MyUtils;
 import com.cins.daily.utils.NetUtil;
 import com.cins.daily.utils.TransformUtils;
 import com.cins.daily.widget.URLImageGetter;
+import com.daimajia.androidanimations.library.Techniques;
+import com.daimajia.androidanimations.library.YoYo;
 import com.socks.library.KLog;
 
 import java.util.List;
@@ -48,9 +49,7 @@ import rx.Subscriber;
 /**
  * Created by Eric on 2017/1/16.
  */
-
 public class NewsDetailActivity extends BaseActivity implements NewsDetailView {
-
     @BindView(R.id.news_detail_photo_iv)
     ImageView mNewsDetailPhotoIv;
     @BindView(R.id.toolbar)
@@ -73,7 +72,7 @@ public class NewsDetailActivity extends BaseActivity implements NewsDetailView {
     @Inject
     NewsDetailPresenterImpl mNewsDetailPresenter;
 
-   private URLImageGetter mUrlImageGetter;
+    private URLImageGetter mUrlImageGetter;
     private String mNewsTitle;
     private String mShareLink;
 
@@ -106,7 +105,6 @@ public class NewsDetailActivity extends BaseActivity implements NewsDetailView {
         mShareLink = newsDetail.getShareLink();
         mNewsTitle = newsDetail.getTitle();
         String newsSource = newsDetail.getSource();
-
         String newsTime = MyUtils.formatDate(newsDetail.getPtime());
         String newsBody = newsDetail.getBody();
         String NewsImgSrc = getImgSrcs(newsDetail);
@@ -148,7 +146,7 @@ public class NewsDetailActivity extends BaseActivity implements NewsDetailView {
                     public void onCompleted() {
                         mProgressBar.setVisibility(View.GONE);
                         mFab.setVisibility(View.VISIBLE);
-
+                        YoYo.with(Techniques.RollIn).playOn(mFab);
                     }
 
                     @Override

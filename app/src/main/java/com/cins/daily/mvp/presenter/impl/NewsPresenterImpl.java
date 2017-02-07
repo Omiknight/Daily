@@ -1,6 +1,7 @@
 package com.cins.daily.mvp.presenter.impl;
 
-import com.cins.daily.greendao.NewsChannelTable;
+
+import com.cins.daily.mvp.entity.NewsChannelTable;
 import com.cins.daily.mvp.interactor.NewsInteractor;
 import com.cins.daily.mvp.interactor.impl.NewsInteractorImpl;
 import com.cins.daily.mvp.presenter.NewsPresenter;

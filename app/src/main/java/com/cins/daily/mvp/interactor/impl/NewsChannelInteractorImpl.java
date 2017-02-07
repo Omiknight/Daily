@@ -3,8 +3,9 @@ package com.cins.daily.mvp.interactor.impl;
 import com.cins.daily.App;
 import com.cins.daily.R;
 import com.cins.daily.common.Constants;
-import com.cins.daily.greendao.NewsChannelTable;
+
 import com.cins.daily.listener.RequestCallBack;
+import com.cins.daily.mvp.entity.NewsChannelTable;
 import com.cins.daily.mvp.interactor.NewsChannelInteractor;
 import com.cins.daily.repository.db.NewsChannelTableManager;
 import com.cins.daily.utils.TransformUtils;

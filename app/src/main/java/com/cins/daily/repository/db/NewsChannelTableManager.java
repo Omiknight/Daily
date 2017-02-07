@@ -4,14 +4,17 @@ import com.cins.daily.App;
 import com.cins.daily.R;
 import com.cins.daily.common.ApiConstants;
 import com.cins.daily.common.Constants;
-import com.cins.daily.greendao.NewsChannelTable;
+
 import com.cins.daily.greendao.NewsChannelTableDao;
+import com.cins.daily.mvp.entity.NewsChannelTable;
 import com.cins.daily.utils.MyUtils;
+
+import org.greenrobot.greendao.query.Query;
 
 import java.util.Arrays;
 import java.util.List;
 
-import de.greenrobot.dao.query.Query;
+
 
 /**
  * Created by Eric on 2017/1/16.

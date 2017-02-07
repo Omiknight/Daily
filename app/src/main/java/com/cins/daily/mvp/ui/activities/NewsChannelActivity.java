@@ -12,8 +12,11 @@ import android.view.View;
 
 import com.cins.daily.R;
 import com.cins.daily.event.ChannelItemMoveEvent;
-import com.cins.daily.greendao.NewsChannelTable;
+
 import com.cins.daily.listener.OnItemClickListener;
+
+
+import com.cins.daily.mvp.entity.NewsChannelTable;
 import com.cins.daily.mvp.presenter.impl.NewsChannelPresenterImpl;
 import com.cins.daily.mvp.ui.activities.base.BaseActivity;
 import com.cins.daily.mvp.ui.adapter.NewsChannelAdapter;

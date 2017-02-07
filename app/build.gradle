@@ -1,5 +1,18 @@
+buildscript {
+    repositories {
+        jcenter()
+        mavenCentral()
+    }
+
+    dependencies {
+        classpath 'com.android.tools.build:gradle:2.2.3'
+        classpath 'org.greenrobot:greendao-gradle-plugin:3.2.1'
+    }
+}
+
 apply plugin: 'com.android.application'
 apply plugin: 'com.neenbedankt.android-apt'
+apply plugin: 'org.greenrobot.greendao'
 
 android {
     compileSdkVersion 23
@@ -22,11 +35,7 @@ android {
             proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
         }
     }
-    sourceSets {
-        main {
-            java.srcDirs = ['src/main/java', 'src/main/java-gen']
-        }
-    }
+
 }
 
 dependencies {
@@ -54,8 +63,8 @@ dependencies {
     compile 'io.reactivex:rxjava:1.1.5'
 
     compile 'com.github.bumptech.glide:glide:3.7.0'
-
-    compile 'de.greenrobot:greendao:1.3.7'
+    //升级greendao3.0
+    compile 'org.greenrobot:greendao:3.2.0'
 
     debugCompile 'com.squareup.leakcanary:leakcanary-android:1.4-beta2'
     releaseCompile 'com.squareup.leakcanary:leakcanary-android-no-op:1.4-beta2'
@@ -79,4 +88,10 @@ dependencies {
     compile 'com.daimajia.easing:library:1.0.1@aar'
     compile 'com.daimajia.androidanimations:library:1.1.3@aar'
 
+
+}
+greendao {
+    schemaVersion 1
+    daoPackage 'com.cins.daily.greendao'
+    targetGenDir 'src/main/java'
 }

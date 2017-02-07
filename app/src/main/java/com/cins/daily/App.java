@@ -20,7 +20,8 @@ import com.socks.library.KLog;
 import com.squareup.leakcanary.LeakCanary;
 import com.squareup.leakcanary.RefWatcher;
 
-import de.greenrobot.dao.query.QueryBuilder;
+import org.greenrobot.greendao.query.QueryBuilder;
+
 
 /**
  * Created by Eric on 2017/1/16.

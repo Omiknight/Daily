@@ -30,7 +30,7 @@ import rx.schedulers.Schedulers;
  * Created by Eric on 2017/1/18.
  */
 
-public class URLImageGetter implements Html.ImageGetter{
+public class URLImageGetter implements Html.ImageGetter {
     private TextView mTextView;
     private int mPicWidth;
     private String mNewsBody;
@@ -47,7 +47,7 @@ public class URLImageGetter implements Html.ImageGetter{
     }
 
     @Override
-    public Drawable getDrawable(String source) {
+    public Drawable getDrawable(final String source) {
         Drawable drawable;
         File file = new File(mFilePath, source.hashCode() + "");
         if (file.exists()) {

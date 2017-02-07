@@ -244,7 +244,7 @@ public abstract class BaseActivity<T extends BasePresenter> extends AppCompatAct
     public void changeToDay() {
 //        AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_YES);
         getDelegate().setLocalNightMode(AppCompatDelegate.MODE_NIGHT_NO);
-        mNightView.setBackgroundResource(R.color.transparent);
+        mNightView.setBackgroundResource(android.R.color.transparent);
     }
 
     public void changeToNight() {

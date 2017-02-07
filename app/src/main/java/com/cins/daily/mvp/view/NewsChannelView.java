@@ -1,6 +1,7 @@
 package com.cins.daily.mvp.view;
 
-import com.cins.daily.greendao.NewsChannelTable;
+
+import com.cins.daily.mvp.entity.NewsChannelTable;
 import com.cins.daily.mvp.view.base.BaseView;
 
 import java.util.List;

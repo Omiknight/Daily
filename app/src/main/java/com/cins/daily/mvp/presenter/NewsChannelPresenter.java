@@ -1,6 +1,7 @@
 package com.cins.daily.mvp.presenter;
 
-import com.cins.daily.greendao.NewsChannelTable;
+
+import com.cins.daily.mvp.entity.NewsChannelTable;
 import com.cins.daily.mvp.presenter.base.BasePresenter;
 
 /**

@@ -1,7 +1,8 @@
 package com.cins.daily.mvp.interactor;
 
-import com.cins.daily.greendao.NewsChannelTable;
+
 import com.cins.daily.listener.RequestCallBack;
+import com.cins.daily.mvp.entity.NewsChannelTable;
 
 import rx.Subscription;
 

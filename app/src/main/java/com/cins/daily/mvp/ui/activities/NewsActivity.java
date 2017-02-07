@@ -17,7 +17,8 @@ import com.cins.daily.annotation.BindValues;
 import com.cins.daily.common.Constants;
 import com.cins.daily.event.ChannelChangeEvent;
 import com.cins.daily.event.ScrollToTopEvent;
-import com.cins.daily.greendao.NewsChannelTable;
+
+import com.cins.daily.mvp.entity.NewsChannelTable;
 import com.cins.daily.mvp.presenter.impl.NewsPresenterImpl;
 import com.cins.daily.mvp.ui.activities.base.BaseActivity;
 import com.cins.daily.mvp.ui.adapter.PagerAdapter.NewsFragmentPagerAdapter;
@@ -106,7 +107,7 @@ public class NewsActivity extends BaseActivity implements NewsView {
     }
 
 
-    @Override
+   @Override
     public void initViewPager(List<NewsChannelTable> newsChannels) {
         final List<String> channelNames = new ArrayList<>();
         if (newsChannels != null) {
@@ -193,4 +194,5 @@ public class NewsActivity extends BaseActivity implements NewsView {
     public void showMsg(String message) {
         Snackbar.make(mFab, message, Snackbar.LENGTH_SHORT).show();
     }
+
 }

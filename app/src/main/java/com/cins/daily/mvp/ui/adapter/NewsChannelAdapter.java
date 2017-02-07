@@ -11,8 +11,8 @@ import android.widget.TextView;
 import com.cins.daily.App;
 import com.cins.daily.R;
 import com.cins.daily.event.ChannelItemMoveEvent;
-import com.cins.daily.greendao.NewsChannelTable;
 import com.cins.daily.listener.OnItemClickListener;
+import com.cins.daily.mvp.entity.NewsChannelTable;
 import com.cins.daily.mvp.ui.adapter.base.BaseRecyclerViewAdapter;
 import com.cins.daily.utils.ClickUtil;
 import com.cins.daily.utils.MyUtils;
@@ -37,6 +37,8 @@ public class NewsChannelAdapter extends BaseRecyclerViewAdapter<NewsChannelTable
     private ItemDragHelperCallback mItemDragHelperCallback;
 
     private OnItemClickListener mOnItemClickListener;
+
+
 
     public void setOnItemClickListener(OnItemClickListener onItemClickListener) {
         mOnItemClickListener = onItemClickListener;

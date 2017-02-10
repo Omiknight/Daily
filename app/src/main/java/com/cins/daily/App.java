@@ -16,6 +16,7 @@ import com.cins.daily.greendao.DaoMaster;
 import com.cins.daily.greendao.DaoSession;
 import com.cins.daily.greendao.NewsChannelTableDao;
 import com.cins.daily.utils.MyUtils;
+import com.cins.daily.utils.SharedPreferencesUtil;
 import com.socks.library.KLog;
 import com.squareup.leakcanary.LeakCanary;
 import com.squareup.leakcanary.RefWatcher;
@@ -51,6 +52,16 @@ public class App extends Application {
         // 官方推荐将获取 DaoMaster 对象的方法放到 Application 层，这样将避免多次创建生成 Session 对象
         setupDatabase();
         initApplicationComponent();
+
+        boolean isNight = SharedPreferencesUtil.getBoolean(this, Constants.ISNIGHT, false);
+
+        if (isNight) {
+            //使用夜间模式
+            AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_YES);
+        } else {
+            //不使用夜间模式
+            AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_NO);
+        }
     }
 
     private void initLeakCanary() {

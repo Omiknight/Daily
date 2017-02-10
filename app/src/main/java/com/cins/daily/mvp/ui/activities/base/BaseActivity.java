@@ -1,8 +1,10 @@
 package com.cins.daily.mvp.ui.activities.base;
 
 import android.annotation.TargetApi;
+import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
+import android.content.res.Configuration;
 import android.graphics.PixelFormat;
 import android.os.Build;
 import android.os.Bundle;
@@ -25,6 +27,7 @@ import android.widget.Toast;
 import com.cins.daily.App;
 import com.cins.daily.R;
 import com.cins.daily.annotation.BindValues;
+import com.cins.daily.common.Constants;
 import com.cins.daily.di.component.ActivityComponent;
 import com.cins.daily.di.component.DaggerActivityComponent;
 import com.cins.daily.di.module.ActivityModule;
@@ -33,6 +36,7 @@ import com.cins.daily.mvp.ui.activities.NewsActivity;
 import com.cins.daily.mvp.ui.activities.NewsDetailActivity;
 import com.cins.daily.utils.MyUtils;
 import com.cins.daily.utils.NetUtil;
+import com.cins.daily.utils.SharedPreferencesUtil;
 import com.readystatesoftware.systembartint.SystemBarTintManager;
 import com.socks.library.KLog;
 import com.squareup.leakcanary.RefWatcher;
@@ -46,7 +50,7 @@ import rx.Subscription;
 public abstract class BaseActivity<T extends BasePresenter> extends AppCompatActivity {
     protected ActivityComponent mActivityComponent;
     private boolean mIsChangeTheme;
-
+    public Activity mActivity;
     public ActivityComponent getActivityComponent() {
         return mActivityComponent;
     }
@@ -71,12 +75,12 @@ public abstract class BaseActivity<T extends BasePresenter> extends AppCompatAct
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        mActivity = this;
         KLog.i(getClass().getSimpleName());
         initAnnotation();
         NetUtil.isNetworkErrThenShowMsg();
         initActivityComponent();
         setStatusBarTranslucent();
-        setNightOrDayMode();
 
         int layoutId = getLayoutId();
         setContentView(layoutId);
@@ -91,7 +95,7 @@ public abstract class BaseActivity<T extends BasePresenter> extends AppCompatAct
             mPresenter.onCreate();
         }
 
-        initNightModeSwitch();
+
     }
 
     private void initAnnotation() {
@@ -101,41 +105,7 @@ public abstract class BaseActivity<T extends BasePresenter> extends AppCompatAct
         }
     }
 
-    private void initNightModeSwitch() {
-        if (this instanceof NewsActivity /*|| this instanceof PhotoActivity*/) {
-            MenuItem menuNightMode = mBaseNavView.getMenu().findItem(R.id.nav_night_mode);
-            SwitchCompat dayNightSwitch = (SwitchCompat) MenuItemCompat
-                    .getActionView(menuNightMode);
-            setCheckedState(dayNightSwitch);
-            setCheckedEvent(dayNightSwitch);
-        }
-    }
 
-    private void setCheckedState(SwitchCompat dayNightSwitch) {
-        if (MyUtils.isNightMode()) {
-            dayNightSwitch.setChecked(true);
-        } else {
-            dayNightSwitch.setChecked(false);
-        }
-    }
-
-    private void setCheckedEvent(SwitchCompat dayNightSwitch) {
-        dayNightSwitch.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
-            @Override
-            public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
-                if (isChecked) {
-                    changeToNight();
-                    MyUtils.saveTheme(true);
-                } else {
-                    changeToDay();
-                    MyUtils.saveTheme(false);
-                }
-
-                mIsChangeTheme = true;
-                mDrawerLayout.closeDrawer(GravityCompat.START);
-            }
-        });
-    }
 
     private void initActivityComponent() {
         mActivityComponent = DaggerActivityComponent.builder()
@@ -215,18 +185,9 @@ public abstract class BaseActivity<T extends BasePresenter> extends AppCompatAct
         }
     }
 
-    private void setNightOrDayMode() {
-        if (MyUtils.isNightMode()) {
-            AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_YES);
 
-            initNightView();
-            mNightView.setBackgroundResource(R.color.night_mask);
-        } else {
-            AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_NO);
-        }
-    }
 
-    // TODO:适配4.4
+    //colorPrimaryDark
     @TargetApi(Build.VERSION_CODES.KITKAT)
     protected void setStatusBarTranslucent() {
         if ((Build.VERSION.SDK_INT >= Build.VERSION_CODES.KITKAT &&
@@ -237,36 +198,8 @@ public abstract class BaseActivity<T extends BasePresenter> extends AppCompatAct
             getWindow().addFlags(WindowManager.LayoutParams.FLAG_TRANSLUCENT_STATUS);
             SystemBarTintManager tintManager = new SystemBarTintManager(this);
             tintManager.setStatusBarTintEnabled(true);
-            tintManager.setStatusBarTintResource(R.color.colorPrimary);
+            tintManager.setStatusBarTintResource(R.color.colorPrimaryDark);
         }
-    }
-
-    public void changeToDay() {
-//        AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_YES);
-        getDelegate().setLocalNightMode(AppCompatDelegate.MODE_NIGHT_NO);
-        mNightView.setBackgroundResource(android.R.color.transparent);
-    }
-
-    public void changeToNight() {
-//        AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_NO);
-        getDelegate().setLocalNightMode(AppCompatDelegate.MODE_NIGHT_YES);
-        initNightView();
-        mNightView.setBackgroundResource(R.color.night_mask);
-    }
-
-    private void initNightView() {
-        if (mIsAddedView) {
-            return;
-        }
-        // 增加夜间模式蒙板
-        WindowManager.LayoutParams nightViewParam = new WindowManager.LayoutParams(
-                WindowManager.LayoutParams.TYPE_APPLICATION,
-                WindowManager.LayoutParams.FLAG_NOT_TOUCHABLE | WindowManager.LayoutParams.FLAG_NOT_FOCUSABLE,
-                PixelFormat.TRANSPARENT);
-        mWindowManager = (WindowManager) getSystemService(Context.WINDOW_SERVICE);
-        mNightView = new View(this);
-        mWindowManager.addView(mNightView, nightViewParam);
-        mIsAddedView = true;
     }
 
     @Override
@@ -281,14 +214,26 @@ public abstract class BaseActivity<T extends BasePresenter> extends AppCompatAct
 
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
-        switch (item.getItemId()) {
-            case android.R.id.home:
-                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
-                    finishAfterTransition();
-                } else {
-                    finish();
-                }
-                break;
+        int id = item.getItemId();
+        if (id == android.R.id.home) {
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
+                finishAfterTransition();
+            } else {
+                finish();
+            }
+        } else if (id == R.id.action_day_night_yes) {
+            int currentNightMode = getResources().getConfiguration().uiMode & Configuration.UI_MODE_NIGHT_MASK;
+            if (currentNightMode == Configuration.UI_MODE_NIGHT_YES) {
+                SharedPreferencesUtil.setBoolean(mActivity, Constants.ISNIGHT, false);
+                AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_NO);
+            } else {
+                SharedPreferencesUtil.setBoolean(mActivity, Constants.ISNIGHT, true);
+                AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_YES);
+            }
+            //调用 recreate(); 使设置生效
+            getWindow().setWindowAnimations(R.style.WindowAnimationFadeInOut);
+            recreate();
+            return true;
         }
         return super.onOptionsItemSelected(item);
     }
@@ -311,10 +256,93 @@ public abstract class BaseActivity<T extends BasePresenter> extends AppCompatAct
         if (mPresenter != null) {
             mPresenter.onDestroy();
         }
-
-        removeNightModeMask();
+        //removeNightModeMask();
         MyUtils.cancelSubscription(mSubscription);
         MyUtils.fixInputMethodManagerLeak(this);
+    }
+
+    @Override
+    protected void onSaveInstanceState(Bundle outState) {
+        super.onSaveInstanceState(outState);
+    }
+
+    /*
+    private void initNightModeSwitch() {
+        if (this instanceof NewsActivity *//*|| this instanceof PhotoActivity*//*) {
+            MenuItem menuNightMode = mBaseNavView.getMenu().findItem(R.id.nav_night_mode);
+            SwitchCompat dayNightSwitch = (SwitchCompat) MenuItemCompat
+                    .getActionView(menuNightMode);
+            setCheckedState(dayNightSwitch);
+            setCheckedEvent(dayNightSwitch);
+        }
+    }
+
+    private void setCheckedState(SwitchCompat dayNightSwitch) {
+        if (MyUtils.isNightMode()) {
+            dayNightSwitch.setChecked(true);
+        } else {
+            dayNightSwitch.setChecked(false);
+        }
+    }
+
+    private void setCheckedEvent(SwitchCompat dayNightSwitch) {
+        dayNightSwitch.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
+            @Override
+            public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
+                if (isChecked) {
+                    changeToNight();
+                    MyUtils.saveTheme(true);
+                } else {
+                    changeToDay();
+                    MyUtils.saveTheme(false);
+                }
+
+                mIsChangeTheme = true;
+                mDrawerLayout.closeDrawer(GravityCompat.START);
+            }
+        });
+    }
+
+    private void setNightOrDayMode() {
+        if (MyUtils.isNightMode()) {
+            AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_YES);
+
+            initNightView();
+            mNightView.setBackgroundResource(R.color.night_mask);
+        } else {
+            AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_NO);
+        }
+    }
+
+    public void changeToDay() {
+//        AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_YES);
+        getDelegate().setLocalNightMode(AppCompatDelegate.MODE_NIGHT_NO);
+        mNightView.setBackgroundResource(android.R.color.transparent);
+
+
+    }
+
+    public void changeToNight() {
+//        AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_NO);
+        getDelegate().setLocalNightMode(AppCompatDelegate.MODE_NIGHT_YES);
+        initNightView();
+        mNightView.setBackgroundResource(R.color.night_mask);
+
+    }
+
+    private void  initNightView() {
+        if (mIsAddedView) {
+            return;
+        }
+        // 增加夜间模式蒙板
+        WindowManager.LayoutParams nightViewParam = new WindowManager.LayoutParams(
+                WindowManager.LayoutParams.TYPE_APPLICATION,
+                WindowManager.LayoutParams.FLAG_NOT_TOUCHABLE | WindowManager.LayoutParams.FLAG_NOT_FOCUSABLE,
+                PixelFormat.TRANSPARENT);
+        mWindowManager = (WindowManager) getSystemService(Context.WINDOW_SERVICE);
+        mNightView = new View(this);
+        mWindowManager.addView(mNightView, nightViewParam);
+        mIsAddedView = true;
     }
 
     private void removeNightModeMask() {
@@ -325,4 +353,5 @@ public abstract class BaseActivity<T extends BasePresenter> extends AppCompatAct
             mNightView = null;
         }
     }
+   */
 }

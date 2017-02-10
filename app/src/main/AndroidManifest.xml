@@ -19,7 +19,7 @@
         <activity
             android:name=".mvp.ui.activities.SplashActivity"
             android:excludeFromRecents="false"
-            android:theme="@style/BaseAppTheme.Trans">
+            android:theme="@style/BaseAppTheme.NoTrans">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN"/>
 

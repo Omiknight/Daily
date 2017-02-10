@@ -4,7 +4,6 @@
     xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
-    app:cardBackgroundColor="@color/item_background"
     app:cardElevation="2dp"
     >
     <!--app:cardCornerRadius="2dp"-->
@@ -34,7 +33,6 @@
             android:layout_marginRight="@dimen/item_margin"
             android:layout_toRightOf="@+id/news_summary_photo_iv"
             android:lines="2"
-            android:textColor="@color/primary_text"
             android:textSize="@dimen/medium"
             tools:text="习近平:吹响建设科技强国号角国号角国号角"/>
 
@@ -49,7 +47,6 @@
             android:ellipsize="end"
             android:singleLine="true"
             android:textAppearance="@style/TextAppearance.AppCompat.Small"
-            android:textColor="@color/secondary_text"
             android:textSize="@dimen/small"
             tools:text="科技是国之利器，中国人民生活要好，必须有强大科技。"/>
 
@@ -61,7 +58,6 @@
             android:layout_below="@id/news_summary_digest_tv"
             android:layout_marginBottom="4dp"
             android:layout_marginRight="@dimen/item_margin"
-            android:textColor="@color/tertiary_text"
             android:textSize="@dimen/micro"
             tools:text="05-28 20:09"/>
 

@@ -6,4 +6,9 @@
         android:orderInCategory="100"
         android:title="@string/action_settings"
         app:showAsAction="never"/>
+    <item
+        android:id="@+id/action_day_night_yes"
+        android:orderInCategory="100"
+        android:title="@string/action_day_night_yes"
+        app:showAsAction="never" />
 </menu>

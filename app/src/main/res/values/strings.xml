@@ -55,19 +55,7 @@
     <string name="about_msg">
         这是一款Material Design风格的新闻阅读App，采用MVP模式，基于Dagger2+RxJava+Retrofit2进行开发。
         \n新闻模块数据来源于网易，图片模块数据来源于干货集中营。
-
-        \n\n项目源码：https://github.com/kaku2015/ColorfulNews
-
-        \n\n主要用到的开源库：Dagger2、RxJava、Retrofit2、Butterknife、Greendao、PhotoView、Glide、Picasso…
-
-        \n\n作者：咖枯
-
-        \n\nGitHub：https://github.com/kaku2015
-
-        \n\n简书：http://www.jianshu.com/users/dc68e267ea1c/latest_articles
-
-        \n\nCSDN：http://blog.csdn.net/kaku2013
-
-        \n\nEmail：kaku201313@163.com
     </string>
+
+    <string name="action_day_night_yes">Night Mode</string>
 </resources>

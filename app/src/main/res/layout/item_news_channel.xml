@@ -8,7 +8,6 @@
     android:layout_margin="@dimen/item_margin"
     android:background="@drawable/bg_item_news_channel"
     android:gravity="center"
-    android:textColor="@color/primary_text"
     android:textSize="@dimen/big_small"
     tools:text="头条">
 </TextView>

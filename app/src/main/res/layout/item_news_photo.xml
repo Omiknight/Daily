@@ -4,7 +4,6 @@
     xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
-    app:cardBackgroundColor="@color/item_background"
     app:cardElevation="2dp"
     >
 
@@ -23,7 +22,6 @@
             android:layout_marginRight="@dimen/item_margin"
             android:layout_marginTop="@dimen/item_margin"
             android:singleLine="true"
-            android:textColor="@color/primary_text"
             android:textSize="@dimen/medium"
             tools:text="武汉孕妇临盆被洪水围困 消防营救"/>
 
@@ -57,7 +55,6 @@
             android:layout_gravity="right"
             android:layout_marginBottom="4dp"
             android:layout_marginRight="@dimen/item_margin"
-            android:textColor="@color/tertiary_text"
             android:textSize="@dimen/micro"
             tools:text="05-28 20:09"/>
     </LinearLayout>

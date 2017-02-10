@@ -28,7 +28,7 @@
         <item name="android:layout_width">wrap_content</item>
         <item name="android:layout_height">wrap_content</item>
         <item name="android:padding">@dimen/item_margin</item>
-        <item name="android:textColor">@color/secondary_text</item>
+        <!--<item name="android:textColor">@color/secondary_text</item>-->
         <item name="android:textSize">@dimen/medium</item>
     </style>
 

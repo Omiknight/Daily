@@ -14,7 +14,7 @@
             android:id="@+id/news_rv"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
-            android:background="@color/container_background"/>
+            />
     </android.support.v4.widget.SwipeRefreshLayout>
 
     <TextView
@@ -26,7 +26,6 @@
         android:drawableTop="@drawable/ic_news_empty"
         android:gravity="center"
         android:text="@string/retry_refresh_news"
-        android:textColor="@color/secondary_text"
         android:textSize="@dimen/big_medium"
         android:visibility="gone"
         tools:visibility="visible"/>

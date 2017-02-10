@@ -5,7 +5,6 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="@color/container_background"
     app:layout_behavior="@string/appbar_scrolling_view_behavior"
     tools:context=".mvp.ui.activities.NewsDetailActivity"
     tools:showIn="@layout/activity_news_detail">
@@ -28,7 +27,6 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:textAppearance="@style/TextAppearance.AppCompat.Body1"
-            android:textColor="@color/secondary_text"
             android:textSize="@dimen/small"
             tools:text="澎湃新闻 06-06 17:24"/>
         <!--        android:layout_below="@id/news_detail_title_tv"
@@ -42,7 +40,6 @@
             android:layout_marginTop="10dp"
             android:lineSpacingExtra="6dp"
             android:textAppearance="@style/TextAppearance.AppCompat.Medium"
-            android:textColor="@color/primary_text"
             android:textSize="@dimen/medium"
             tools:text="最近，“民国无名女神”在微博上火了。讲真，这位无名女神是比现在那些整容脸、
             网红脸让人看的赏心悦目。但是，比起那些年轰动的民国美女和才女们，她还是略有逊色。

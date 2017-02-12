@@ -38,5 +38,9 @@
             android:name=".mvp.ui.activities.NewsChannelActivity"
             android:theme="@style/BaseAppTheme.NoTrans">
         </activity>
+        <activity
+            android:name=".mvp.ui.activities.NewsPhotoDetailActivity"
+            android:theme="@style/BaseAppTheme.NoTrans">
+        </activity>
     </application>
 </manifest>

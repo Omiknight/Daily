@@ -9,6 +9,7 @@ import com.cins.daily.di.scope.PerActivity;
 import com.cins.daily.mvp.ui.activities.NewsActivity;
 import com.cins.daily.mvp.ui.activities.NewsChannelActivity;
 import com.cins.daily.mvp.ui.activities.NewsDetailActivity;
+import com.cins.daily.mvp.ui.activities.NewsPhotoDetailActivity;
 
 import dagger.Component;
 
@@ -33,7 +34,7 @@ public interface ActivityComponent {
 
     void inject(NewsChannelActivity newsChannelActivity);
 
-    //void inject(NewsPhotoDetailActivity newsPhotoDetailActivity);
+    void inject(NewsPhotoDetailActivity newsPhotoDetailActivity);
 
     //void inject(PhotoActivity photoActivity);
 

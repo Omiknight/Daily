@@ -28,6 +28,7 @@ import com.cins.daily.mvp.entity.NewsPhotoDetail;
 import com.cins.daily.mvp.entity.NewsSummary;
 import com.cins.daily.mvp.presenter.impl.NewsListPresenterImpl;
 import com.cins.daily.mvp.ui.activities.NewsDetailActivity;
+import com.cins.daily.mvp.ui.activities.NewsPhotoDetailActivity;
 import com.cins.daily.mvp.ui.adapter.NewsListAdapter;
 import com.cins.daily.mvp.ui.fragment.base.BaseFragment;
 import com.cins.daily.mvp.view.NewsListView;
@@ -228,7 +229,8 @@ public class NewsListFragment extends BaseFragment implements NewsListView, News
     @Override
     public void onItemClick(View view, int position, boolean isPhoto) {
         if (isPhoto) {
-
+            NewsPhotoDetail newsPhotoDetail = getPhotoDetail(position);
+            goToPhotoDetailActivity(newsPhotoDetail);
         } else {
             goToNewsDetailActivity(view, position);
         }
@@ -270,7 +272,11 @@ public class NewsListFragment extends BaseFragment implements NewsListView, News
         pictureList.add(picture);
     }
 
-
+    private void goToPhotoDetailActivity(NewsPhotoDetail newsPhotoDetail) {
+        Intent intent = new Intent(getActivity(), NewsPhotoDetailActivity.class);
+        intent.putExtra(Constants.PHOTO_DETAIL, newsPhotoDetail);
+        startActivity(intent);
+    }
 
     private void goToNewsDetailActivity(View view, int position) {
         Intent intent = setIntent(position);

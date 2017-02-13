@@ -1,8 +1,13 @@
 package com.cins.daily.mvp.ui.activities;
 
+import android.animation.Animator;
+import android.animation.AnimatorListenerAdapter;
+import android.animation.AnimatorSet;
+import android.animation.ObjectAnimator;
 import android.animation.ValueAnimator;
 import android.content.Intent;
 import android.os.Bundle;
+import android.os.SystemClock;
 import android.support.annotation.Nullable;
 import android.support.v7.app.AppCompatActivity;
 import android.view.animation.Animation;
@@ -10,11 +15,12 @@ import android.view.animation.AnimationUtils;
 import android.widget.ImageView;
 import android.widget.TextView;
 
+import com.cins.daily.R;
 import com.daimajia.androidanimations.library.Techniques;
 import com.daimajia.androidanimations.library.YoYo;
-import com.cins.daily.R;
 import com.socks.library.KLog;
 
+import java.util.Random;
 import java.util.concurrent.TimeUnit;
 
 import butterknife.BindView;
@@ -30,66 +36,61 @@ import rx.schedulers.Schedulers;
 
 public class SplashActivity extends AppCompatActivity {
 
-    @BindView(R.id.logo_outer_iv)
-    ImageView mLogoOuterIv;
-    @BindView(R.id.logo_inner_iv)
-    ImageView mLogoInnerIv;
-    boolean isShowingRubberEffect = false;
-    @BindView(R.id.app_name_tv)
-    TextView mAppNameTv;
+    private static final int ANIMATION_DURATION = 2000;
+    private static final float SCALE_END = 1.13F;
+
+    private static final int[] SPLASH_ARRAY = {
+            R.drawable.splash0,
+            R.drawable.splash1,
+            R.drawable.splash2,
+            R.drawable.splash3,
+            R.drawable.splash4,
+            R.drawable.splash5,
+            R.drawable.splash6,
+            R.drawable.splash7,
+            R.drawable.splash8,
+            R.drawable.splash9,
+            R.drawable.splash10,
+            R.drawable.splash11,
+            R.drawable.splash12,
+            R.drawable.splash13,
+            R.drawable.splash14,
+            R.drawable.splash15,
+            R.drawable.splash16,
+    };
+
+    @BindView(R.id.iv_splash)
+    ImageView mIvSplash;
+    @BindView(R.id.tv_title)
+    TextView mTvTitle;
+    @BindView(R.id.tv_author)
+    TextView mTvAuthor;
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        overridePendingTransition(R.anim.zoomin, 0);
-        setContentView(R.layout.activity_splash);
+        setContentView(R.layout.activity_splash1);
         ButterKnife.bind(this);
-        initAnimation();
-    }
 
-    private void initAnimation() {
-        startLogoInner1();
-        startLogoOuterAndAppName();
+        Random r = new Random(SystemClock.elapsedRealtime());
+        mIvSplash.setImageResource(SPLASH_ARRAY[r.nextInt(SPLASH_ARRAY.length)]);
+        animateImage();
     }
+    private void animateImage() {
+        ObjectAnimator animatorX = ObjectAnimator.ofFloat(mIvSplash, "scaleX", 1f, SCALE_END);
+        ObjectAnimator animatorY = ObjectAnimator.ofFloat(mIvSplash, "scaleY", 1f, SCALE_END);
 
-    private void startLogoInner1() {
-        Animation animation = AnimationUtils.loadAnimation(this, R.anim.anim_top_in);
-        mLogoInnerIv.startAnimation(animation);
-    }
+        AnimatorSet set = new AnimatorSet();
+        set.setDuration(ANIMATION_DURATION).play(animatorX).with(animatorY);
+        set.start();
 
-    private void startLogoOuterAndAppName() {
-        final ValueAnimator valueAnimator = ValueAnimator.ofFloat(0, 1);
-        valueAnimator.setDuration(1000);
-        valueAnimator.addUpdateListener(new ValueAnimator.AnimatorUpdateListener() {
+        set.addListener(new AnimatorListenerAdapter() {
             @Override
-            public void onAnimationUpdate(ValueAnimator animation) {
-                float fraction = animation.getAnimatedFraction();
-                KLog.d("fraction: " + fraction);
-                if (fraction >= 0.8 && !isShowingRubberEffect) {
-                    isShowingRubberEffect = true;
-                    startLogoOuter();
-                    startShowAppName();
-                    finishActivity();
-                } else if (fraction >= 0.95) {
-                    valueAnimator.cancel();
-                    startLogoInner2();
-                }
-
+            public void onAnimationEnd(Animator animation) {
+                NewsActivity.start(SplashActivity.this);
+                SplashActivity.this.finish();
             }
         });
-        valueAnimator.start();
-    }
-
-    private void startLogoOuter() {
-        YoYo.with(Techniques.RubberBand).duration(1000).playOn(mLogoOuterIv);
-    }
-
-    private void startShowAppName() {
-        YoYo.with(Techniques.FadeIn).duration(1000).playOn(mAppNameTv);
-    }
-
-    private void startLogoInner2() {
-        YoYo.with(Techniques.Bounce).duration(1000).playOn(mLogoInnerIv);
     }
 
     private void finishActivity() {

@@ -134,12 +134,12 @@ public abstract class BaseActivity<T extends BasePresenter> extends AppCompatAct
                         case R.id.nav_news:
                             mClass = NewsActivity.class;
                             break;
-                        case R.id.nav_photo:
+                        /*case R.id.nav_photo:
                             //mClass = PhotoActivity.class;
                             break;
                         case R.id.nav_video:
                             Toast.makeText(BaseActivity.this, "施工准备中...", Toast.LENGTH_SHORT).show();
-                            break;
+                            break;*/
                         case R.id.nav_night_mode:
                             break;
                     }

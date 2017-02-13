@@ -1,5 +1,6 @@
 package com.cins.daily.mvp.ui.activities;
 
+import android.app.Activity;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.design.widget.FloatingActionButton;
@@ -195,4 +196,7 @@ public class NewsActivity extends BaseActivity implements NewsView {
         Snackbar.make(mFab, message, Snackbar.LENGTH_SHORT).show();
     }
 
+    public static void start(Activity activity) {
+        activity.startActivity(new Intent(activity, NewsActivity.class));
+    }
 }

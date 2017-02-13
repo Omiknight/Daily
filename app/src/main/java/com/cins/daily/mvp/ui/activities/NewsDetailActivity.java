@@ -1,10 +1,13 @@
 package com.cins.daily.mvp.ui.activities;
 
+import android.content.ClipData;
+import android.content.ClipboardManager;
 import android.content.Intent;
 import android.net.Uri;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.design.widget.AppBarLayout;
+import android.support.design.widget.BottomSheetDialog;
 import android.support.design.widget.CollapsingToolbarLayout;
 import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.Snackbar;
@@ -15,6 +18,7 @@ import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.ImageView;
+import android.widget.LinearLayout;
 import android.widget.ProgressBar;
 import android.widget.TextView;
 
@@ -25,6 +29,7 @@ import com.cins.daily.App;
 import com.cins.daily.R;
 import com.cins.daily.common.Constants;
 import com.cins.daily.mvp.entity.NewsDetail;
+import com.cins.daily.mvp.presenter.NewsDetailPresenter;
 import com.cins.daily.mvp.presenter.impl.NewsDetailPresenterImpl;
 import com.cins.daily.mvp.ui.activities.base.BaseActivity;
 import com.cins.daily.mvp.view.NewsDetailView;
@@ -210,20 +215,49 @@ public class NewsDetailActivity extends BaseActivity implements NewsDetailView {
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         // Inflate the menu; this adds items to the action bar if it is present.
-        //getMenuInflater().inflate(R.menu.news_detail, menu);
+        getMenuInflater().inflate(R.menu.menu_more, menu);
         return true;
     }
 
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
-        switch (item.getItemId()) {
+        int id = item.getItemId();
+        if (id == android.R.id.home) {
+            onBackPressed();
+        } else if (id == R.id.action_more) {
+            final BottomSheetDialog dialog = new BottomSheetDialog(this);
+            final View view = getLayoutInflater().inflate(R.layout.menu_more_actions_sheet, null);
 
+           view.findViewById(R.id.layout_open_in_browser).setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    dialog.dismiss();
+                    openByBrowser();
+                }
+            });
+
+            view.findViewById(R.id.layout_copy_link).setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    dialog.dismiss();
+                    copyLink();
+                }
+            });
+            dialog.setContentView(view);
+            dialog.show();
         }
-        return super.onOptionsItemSelected(item);
+        return true;
+        //return super.onOptionsItemSelected(item);
     }
 
 
-
+    /* private void openByWebView() {
+         Intent intent = new Intent(this, NewsBrowserActivity.class);
+         intent.putExtra(Constants.NEWS_LINK, mShareLink);
+         intent.putExtra(Constants.NEWS_TITLE, mNewsTitle);
+         startActivity(intent);
+     }
+ */
     private void openByBrowser() {
         Intent intent = new Intent();
         intent.setAction("android.intent.action.VIEW");
@@ -237,6 +271,31 @@ public class NewsDetailActivity extends BaseActivity implements NewsDetailView {
     private boolean canBrowse(Intent intent) {
         return intent.resolveActivity(getPackageManager()) != null && mShareLink != null;
     }
+
+    private void copyLink() {
+
+        if (mShareLink != null) {
+            ClipboardManager manager = (ClipboardManager) getSystemService(CLIPBOARD_SERVICE);
+            ClipData clipData = null;
+            clipData = ClipData.newPlainText("text", Html.fromHtml(mShareLink).toString());
+            manager.setPrimaryClip(clipData);
+            Snackbar.make(getWindow().getDecorView(), R.string.copied_to_clipboard, Snackbar.LENGTH_SHORT).show();
+        } else {
+            Snackbar.make(getWindow().getDecorView(),R.string.copied_to_clipboard_failed,Snackbar.LENGTH_SHORT).show();
+        }
+    }
+
+    /*
+    private void copyText() {
+        if (mShareLink != null) {
+            ClipboardManager manager = (ClipboardManager) getSystemService(CLIPBOARD_SERVICE);
+            ClipData clipData = null;
+            clipData = ClipData.newPlainText("text", Html.fromHtml(mNewsDetail.getBody()).toString());
+            manager.setPrimaryClip(clipData);
+            //Snackbar.make(imageView,R.string.copied_to_clipboard, Snackbar.LENGTH_SHORT).show();
+        }
+    }
+*/
 
     @Override
     protected void onDestroy() {

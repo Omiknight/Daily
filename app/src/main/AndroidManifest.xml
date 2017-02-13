@@ -18,8 +18,8 @@
         android:theme="@style/BaseAppTheme">
         <activity
             android:name=".mvp.ui.activities.SplashActivity"
-            android:excludeFromRecents="false"
-            android:theme="@style/BaseAppTheme.NoTrans">
+            android:configChanges="orientation|keyboardHidden|screenSize"
+            android:theme="@style/AppTheme.FullScreen">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN"/>
 

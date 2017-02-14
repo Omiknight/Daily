@@ -61,8 +61,6 @@ public class SplashActivity extends AppCompatActivity {
 
     @BindView(R.id.iv_splash)
     ImageView mIvSplash;
-    @BindView(R.id.tv_title)
-    TextView mTvTitle;
     @BindView(R.id.tv_author)
     TextView mTvAuthor;
 

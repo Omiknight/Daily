@@ -8,15 +8,18 @@ import android.os.Build;
 import android.os.Bundle;
 import android.support.design.widget.NavigationView;
 import android.support.v4.view.GravityCompat;
+import android.support.v4.view.MenuItemCompat;
 import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.ActionBarDrawerToggle;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.app.AppCompatDelegate;
+import android.support.v7.widget.SwitchCompat;
 import android.support.v7.widget.Toolbar;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.WindowManager;
+import android.widget.CompoundButton;
 import android.widget.Toast;
 
 import com.cins.daily.App;
@@ -90,7 +93,7 @@ public abstract class BaseActivity<T extends BasePresenter> extends AppCompatAct
             mPresenter.onCreate();
         }
 
-
+        initNightModeSwitch();
     }
 
     private void initAnnotation() {
@@ -114,7 +117,41 @@ public abstract class BaseActivity<T extends BasePresenter> extends AppCompatAct
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
     }
+    private void initNightModeSwitch() {
+        if (this instanceof NewsActivity) {
+            MenuItem menuNightMode = mBaseNavView.getMenu().findItem(R.id.nav_night_mode);
+            SwitchCompat dayNightSwitch = (SwitchCompat) MenuItemCompat
+                    .getActionView(menuNightMode);
+            setCheckedState(dayNightSwitch);
+            setCheckedEvent(dayNightSwitch);
+        }
+    }
 
+    private void setCheckedState(SwitchCompat dayNightSwitch) {
+        boolean isNight = SharedPreferencesUtil.getBoolean(this, Constants.ISNIGHT, false);
+        if (isNight) {
+            dayNightSwitch.setChecked(true);
+        } else {
+            dayNightSwitch.setChecked(false);
+        }
+    }
+
+    private void setCheckedEvent(SwitchCompat dayNightSwitch) {
+        dayNightSwitch.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
+            @Override
+            public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
+                if (isChecked) {
+                    SharedPreferencesUtil.setBoolean(mActivity, Constants.ISNIGHT, true);
+                    AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_YES);
+                } else {
+                    SharedPreferencesUtil.setBoolean(mActivity, Constants.ISNIGHT, false);
+                    AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_NO);
+                }
+                mIsChangeTheme = true;
+                mDrawerLayout.closeDrawer(GravityCompat.START);
+            }
+        });
+    }
     private void initDrawerLayout() {
 
         mDrawerLayout = (DrawerLayout) findViewById(R.id.drawer_layout);
@@ -260,93 +297,4 @@ public abstract class BaseActivity<T extends BasePresenter> extends AppCompatAct
     protected void onSaveInstanceState(Bundle outState) {
         super.onSaveInstanceState(outState);
     }
-
-    /*
-    private void initNightModeSwitch() {
-        if (this instanceof NewsActivity *//*|| this instanceof PhotoActivity*//*) {
-            MenuItem menuNightMode = mBaseNavView.getMenu().findItem(R.id.nav_night_mode);
-            SwitchCompat dayNightSwitch = (SwitchCompat) MenuItemCompat
-                    .getActionView(menuNightMode);
-            setCheckedState(dayNightSwitch);
-            setCheckedEvent(dayNightSwitch);
-        }
-    }
-
-    private void setCheckedState(SwitchCompat dayNightSwitch) {
-        if (MyUtils.isNightMode()) {
-            dayNightSwitch.setChecked(true);
-        } else {
-            dayNightSwitch.setChecked(false);
-        }
-    }
-
-    private void setCheckedEvent(SwitchCompat dayNightSwitch) {
-        dayNightSwitch.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
-            @Override
-            public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
-                if (isChecked) {
-                    changeToNight();
-                    MyUtils.saveTheme(true);
-                } else {
-                    changeToDay();
-                    MyUtils.saveTheme(false);
-                }
-
-                mIsChangeTheme = true;
-                mDrawerLayout.closeDrawer(GravityCompat.START);
-            }
-        });
-    }
-
-    private void setNightOrDayMode() {
-        if (MyUtils.isNightMode()) {
-            AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_YES);
-
-            initNightView();
-            mNightView.setBackgroundResource(R.color.night_mask);
-        } else {
-            AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_NO);
-        }
-    }
-
-    public void changeToDay() {
-//        AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_YES);
-        getDelegate().setLocalNightMode(AppCompatDelegate.MODE_NIGHT_NO);
-        mNightView.setBackgroundResource(android.R.color.transparent);
-
-
-    }
-
-    public void changeToNight() {
-//        AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_NO);
-        getDelegate().setLocalNightMode(AppCompatDelegate.MODE_NIGHT_YES);
-        initNightView();
-        mNightView.setBackgroundResource(R.color.night_mask);
-
-    }
-
-    private void  initNightView() {
-        if (mIsAddedView) {
-            return;
-        }
-        // 增加夜间模式蒙板
-        WindowManager.LayoutParams nightViewParam = new WindowManager.LayoutParams(
-                WindowManager.LayoutParams.TYPE_APPLICATION,
-                WindowManager.LayoutParams.FLAG_NOT_TOUCHABLE | WindowManager.LayoutParams.FLAG_NOT_FOCUSABLE,
-                PixelFormat.TRANSPARENT);
-        mWindowManager = (WindowManager) getSystemService(Context.WINDOW_SERVICE);
-        mNightView = new View(this);
-        mWindowManager.addView(mNightView, nightViewParam);
-        mIsAddedView = true;
-    }
-
-    private void removeNightModeMask() {
-        if (mIsAddedView) {
-            // 移除夜间模式蒙板
-            mWindowManager.removeViewImmediate(mNightView);
-            mWindowManager = null;
-            mNightView = null;
-        }
-    }
-   */
 }

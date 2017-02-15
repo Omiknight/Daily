@@ -30,6 +30,7 @@ import com.cins.daily.di.component.ActivityComponent;
 import com.cins.daily.di.component.DaggerActivityComponent;
 import com.cins.daily.di.module.ActivityModule;
 import com.cins.daily.mvp.presenter.base.BasePresenter;
+import com.cins.daily.mvp.ui.activities.AboutActivity;
 import com.cins.daily.mvp.ui.activities.NewsActivity;
 import com.cins.daily.mvp.ui.activities.NewsDetailActivity;
 import com.cins.daily.utils.MyUtils;
@@ -266,6 +267,9 @@ public abstract class BaseActivity<T extends BasePresenter> extends AppCompatAct
             getWindow().setWindowAnimations(R.style.WindowAnimationFadeInOut);
             recreate();
             return true;
+        } else if (id == R.id.action_settings) {
+            Intent intent = new Intent(this, AboutActivity.class);
+            startActivity(intent);
         }
         return super.onOptionsItemSelected(item);
     }

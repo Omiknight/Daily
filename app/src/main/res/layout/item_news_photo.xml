@@ -35,17 +35,17 @@
             <ImageView
                 android:id="@+id/news_summary_photo_iv_left"
                 style="@style/news_summary_photo_iv"
-                tools:src="@mipmap/ic_launcher"/>
+                tools:src="@mipmap/1"/>
 
             <ImageView
                 android:id="@+id/news_summary_photo_iv_middle"
                 style="@style/news_summary_photo_iv"
-                tools:src="@mipmap/ic_launcher"/>
+                tools:src="@mipmap/1"/>
 
             <ImageView
                 android:id="@+id/news_summary_photo_iv_right"
                 style="@style/news_summary_photo_iv"
-                tools:src="@mipmap/ic_launcher"/>
+                tools:src="@mipmap/1"/>
         </LinearLayout>
 
         <TextView

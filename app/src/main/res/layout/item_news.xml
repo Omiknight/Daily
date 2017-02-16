@@ -22,7 +22,7 @@
             android:layout_margin="@dimen/item_margin"
             android:scaleType="centerCrop"
             android:transitionName="@string/transition_photos"
-            tools:src="@mipmap/ic_launcher"
+            tools:src="@mipmap/1"
             tools:targetApi="lollipop"/>
 
         <TextView

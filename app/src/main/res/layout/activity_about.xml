@@ -8,14 +8,12 @@
               android:clipToPadding="true"
               android:fitsSystemWindows="true"
               tools:context=".mvp.ui.activities.AboutActivity">
-
     <android.support.v7.widget.Toolbar
         android:id="@+id/toolbar"
-        android:layout_width="match_parent"
-        android:layout_height="?attr/actionBarSize"
-        android:background="?attr/colorPrimary"
+        style="@style/action_bar"
+        android:background="@color/colorPrimary"
+        android:theme="@style/AppTheme.AppBarOverlay"
         app:navigationIcon="@drawable/ic_arrow_back"
-        app:popupTheme="@style/ThemeOverlay.AppCompat.Light"
         app:title="@string/about"/>
     <ScrollView
         android:id="@+id/aboutme"

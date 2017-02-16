@@ -45,7 +45,7 @@ public class SplashActivity extends AppCompatActivity {
             R.drawable.splash2,
             R.drawable.splash3,
             R.drawable.splash4,
-            R.drawable.splash5,
+
             R.drawable.splash6,
             R.drawable.splash7,
             R.drawable.splash8,

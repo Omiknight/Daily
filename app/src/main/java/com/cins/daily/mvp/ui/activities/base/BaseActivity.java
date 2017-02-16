@@ -178,6 +178,9 @@ public abstract class BaseActivity<T extends BasePresenter> extends AppCompatAct
                         case R.id.nav_video:
                             Toast.makeText(BaseActivity.this, "施工准备中...", Toast.LENGTH_SHORT).show();
                             break;*/
+                        case R.id.nav_about:
+                            mClass = AboutActivity.class;
+                            break;
                         case R.id.nav_night_mode:
                             break;
                     }
@@ -268,8 +271,7 @@ public abstract class BaseActivity<T extends BasePresenter> extends AppCompatAct
             recreate();
             return true;
         } else if (id == R.id.action_settings) {
-            Intent intent = new Intent(this, AboutActivity.class);
-            startActivity(intent);
+
         }
         return super.onOptionsItemSelected(item);
     }

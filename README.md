@@ -7,6 +7,9 @@ This is an Android project. iDaily is a Android client of content collection , b
 
 </div>
 </br></br>
+</br></br>
+</br></br>
+</br></br>
 ## SnapShot
 ![](/SnapShot/resize.gif)
 </div>

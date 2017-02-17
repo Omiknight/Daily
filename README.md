@@ -1,12 +1,12 @@
 # Daily
 
-<img src="/app/src/main/res/mipmap/ic_launcher.png" align="left" width="200" hspace="10" vspace="10">
-This is an Android project. iDaily is a Android client of content collection , base on Material Design + MVP + RxJava + Retrofit.You can read something interesting about news,picture,video. 
-</br>
+<img src="/app/src/main/res/drawable/head.png" align="left" width="200" hspace="10" vspace="10">
+This is an Android project. iDaily is a Android client of content collection , base on Material Design + MVP + RxJava + Retrofit.You can read something interesting about news,picture,video here. </br>
 
+<div style="display:flex;" >
 
+</div>
 </br></br>
-
 ## SnapShot
 ![](/SnapShot/resize.gif)
 </div>

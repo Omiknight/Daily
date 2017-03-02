@@ -1,12 +1,5 @@
 package com.cins.daily.mvp.presenter.impl;
 
-import android.content.ClipData;
-import android.content.ClipboardManager;
-import android.content.Context;
-import android.content.Intent;
-import android.net.Uri;
-import android.text.Html;
-
 import com.cins.daily.mvp.entity.NewsDetail;
 import com.cins.daily.mvp.interactor.NewsDetailInteractor;
 import com.cins.daily.mvp.interactor.impl.NewsDetailInteractorImpl;
@@ -16,7 +9,6 @@ import com.cins.daily.mvp.view.NewsDetailView;
 
 import javax.inject.Inject;
 
-import static android.content.Context.CLIPBOARD_SERVICE;
 
 /**
  * Created by Eric on 2017/1/18.

@@ -2,8 +2,6 @@ package com.cins.daily.mvp.interactor;
 
 import com.cins.daily.listener.RequestCallBack;
 
-import java.util.List;
-
 import rx.Subscription;
 
 /**

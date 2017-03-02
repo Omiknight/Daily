@@ -1,7 +1,6 @@
 package com.cins.daily.mvp.interactor;
 
 import com.cins.daily.listener.RequestCallBack;
-
 import rx.Subscription;
 
 /**

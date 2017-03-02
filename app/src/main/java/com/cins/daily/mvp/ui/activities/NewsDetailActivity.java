@@ -18,7 +18,6 @@ import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.ImageView;
-import android.widget.LinearLayout;
 import android.widget.ProgressBar;
 import android.widget.TextView;
 
@@ -29,7 +28,6 @@ import com.cins.daily.App;
 import com.cins.daily.R;
 import com.cins.daily.common.Constants;
 import com.cins.daily.mvp.entity.NewsDetail;
-import com.cins.daily.mvp.presenter.NewsDetailPresenter;
 import com.cins.daily.mvp.presenter.impl.NewsDetailPresenterImpl;
 import com.cins.daily.mvp.ui.activities.base.BaseActivity;
 import com.cins.daily.mvp.view.NewsDetailView;

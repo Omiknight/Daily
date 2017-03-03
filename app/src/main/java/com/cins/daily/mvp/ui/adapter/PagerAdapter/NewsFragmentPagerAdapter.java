@@ -4,6 +4,8 @@ import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentPagerAdapter;
 
+import com.cins.daily.mvp.ui.fragment.NewsListFragment;
+
 import java.util.ArrayList;
 import java.util.List;
 
@@ -35,5 +37,17 @@ public class NewsFragmentPagerAdapter extends FragmentPagerAdapter {
     @Override
     public int getCount() {
         return mNewsFragmentList.size();
+    }
+
+    @Override
+    public long getItemId(int position) {
+        super.getItemId(position);
+        if (mNewsFragmentList != null) {
+            if (position < mNewsFragmentList.size()) {
+                //不同的Fragment分配的HashCode不同，从而实现刷新adapter中的fragment
+                return mNewsFragmentList.get(position).hashCode();
+            }
+        }
+        return super.getItemId(position);
     }
 }

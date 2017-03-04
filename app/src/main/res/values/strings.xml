@@ -69,4 +69,8 @@
 
     <string name="copied_to_clipboard">复制成功</string>
     <string name="copied_to_clipboard_failed">复制失败</string>
+
+    <string name="splash_slogan">Go through the every bit of life</string>
+    <string name="splash_version">V 1.0.0</string>
+    <string name="splash_copyright">Copyright &#169; 2017 iDaily All Rights Reserved\nPowered by Eric Jin</string>
 </resources>

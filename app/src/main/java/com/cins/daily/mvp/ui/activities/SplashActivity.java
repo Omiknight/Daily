@@ -55,8 +55,15 @@ public class SplashActivity extends AppCompatActivity {
 
     @BindView(R.id.iv_splash)
     ImageView mIvSplash;
-    @BindView(R.id.tv_author)
-    TextView mTvAuthor;
+
+    @BindView(R.id.splash_app_name)
+    TextView mSplashAppName;
+    @BindView(R.id.splash_slogan)
+    TextView mSplashSlogan;
+    @BindView(R.id.splash_version_name)
+    TextView mSplashVersionName;
+    @BindView(R.id.splash_copyright)
+    TextView mSplashCopyright;
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
@@ -68,6 +75,7 @@ public class SplashActivity extends AppCompatActivity {
         mIvSplash.setImageResource(SPLASH_ARRAY[r.nextInt(SPLASH_ARRAY.length)]);
         animateImage();
     }
+
     private void animateImage() {
         ObjectAnimator animatorX = ObjectAnimator.ofFloat(mIvSplash, "scaleX", 1f, SCALE_END);
         ObjectAnimator animatorY = ObjectAnimator.ofFloat(mIvSplash, "scaleY", 1f, SCALE_END);

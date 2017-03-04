@@ -43,7 +43,9 @@
                 android:foreground="?android:attr/selectableItemBackground"
                 android:maxHeight="?attr/actionBarSize"
                 android:padding="@dimen/item_margin"
-                android:src="@drawable/ic_add"/>
+                android:src="@drawable/ic_add"
+                android:contentDescription=""
+                tools:ignore="ContentDescription"/>
         </LinearLayout>
 
     </android.support.design.widget.AppBarLayout>

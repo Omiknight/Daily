@@ -13,8 +13,8 @@
         <item name="windowNoTitle">true</item>
 
 
-        <!--<item name="android:screenOrientation">portrait</item>
-        <item name="android:windowTranslucentStatus" tools:targetApi="kitkat">true</item>-->
+        <item name="android:screenOrientation">portrait</item>
+        <item name="android:windowTranslucentStatus" tools:targetApi="kitkat">true</item>
     </style>
 
     <style name="BaseAppTheme.NoActionBar">

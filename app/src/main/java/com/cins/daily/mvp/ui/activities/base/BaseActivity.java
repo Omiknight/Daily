@@ -20,7 +20,6 @@ import android.view.MenuItem;
 import android.view.View;
 import android.view.WindowManager;
 import android.widget.CompoundButton;
-import android.widget.Toast;
 
 import com.cins.daily.App;
 import com.cins.daily.R;
@@ -29,7 +28,6 @@ import com.cins.daily.common.Constants;
 import com.cins.daily.di.component.ActivityComponent;
 import com.cins.daily.di.component.DaggerActivityComponent;
 import com.cins.daily.di.module.ActivityModule;
-import com.cins.daily.mvp.entity.NewsChannelTable;
 import com.cins.daily.mvp.presenter.base.BasePresenter;
 import com.cins.daily.mvp.ui.activities.AboutActivity;
 import com.cins.daily.mvp.ui.activities.NewsActivity;
@@ -40,8 +38,6 @@ import com.cins.daily.utils.SharedPreferencesUtil;
 import com.readystatesoftware.systembartint.SystemBarTintManager;
 import com.socks.library.KLog;
 import com.squareup.leakcanary.RefWatcher;
-
-import java.util.List;
 
 import butterknife.ButterKnife;
 import rx.Subscription;
@@ -237,7 +233,7 @@ public abstract class BaseActivity<T extends BasePresenter> extends AppCompatAct
             getWindow().addFlags(WindowManager.LayoutParams.FLAG_TRANSLUCENT_STATUS);
             SystemBarTintManager tintManager = new SystemBarTintManager(this);
             tintManager.setStatusBarTintEnabled(true);
-            tintManager.setStatusBarTintResource(R.color.colorPrimaryDark);
+            tintManager.setStatusBarTintResource(R.color.colorPrimary);
         }
     }
 
@@ -297,7 +293,6 @@ public abstract class BaseActivity<T extends BasePresenter> extends AppCompatAct
         if (mPresenter != null) {
             mPresenter.onDestroy();
         }
-        //removeNightModeMask();
         MyUtils.cancelSubscription(mSubscription);
         MyUtils.fixInputMethodManagerLeak(this);
     }

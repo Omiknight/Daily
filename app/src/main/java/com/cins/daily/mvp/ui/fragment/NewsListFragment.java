@@ -12,7 +12,6 @@ import android.support.design.widget.Snackbar;
 import android.support.v4.app.ActivityCompat;
 import android.support.v4.app.ActivityOptionsCompat;
 import android.support.v4.widget.SwipeRefreshLayout;
-import android.support.v7.widget.DefaultItemAnimator;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.view.View;
@@ -39,6 +38,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import javax.inject.Inject;
+
 import butterknife.BindView;
 import butterknife.OnClick;
 import rx.functions.Action1;
@@ -111,7 +111,7 @@ public class NewsListFragment extends BaseFragment implements NewsListView, News
         mNewsRv.setHasFixedSize(true);
         mNewsRv.setLayoutManager(new LinearLayoutManager(mActivity,
                 LinearLayoutManager.VERTICAL, false));
-        mNewsRv.setItemAnimator(new DefaultItemAnimator());
+        //mNewsRv.setItemAnimator(new DefaultItemAnimator());
         mNewsRv.addOnScrollListener(new RecyclerView.OnScrollListener() {
             @Override
             public void onScrollStateChanged(RecyclerView recyclerView, int newState) {

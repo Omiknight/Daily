@@ -14,7 +14,7 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content">
 
-        <ImageView
+        <com.elyeproj.loaderviewlibrary.LoaderImageView
             android:id="@+id/news_summary_photo_iv"
             android:layout_width="72dp"
             android:layout_height="72dp"
@@ -23,9 +23,10 @@
             android:scaleType="centerCrop"
             android:transitionName="@string/transition_photos"
             tools:src="@mipmap/1"
-            tools:targetApi="lollipop"/>
+            tools:targetApi="lollipop"
+            app:use_gradient="true"/>
 
-        <TextView
+        <com.elyeproj.loaderviewlibrary.LoaderTextView
             android:id="@+id/news_summary_title_tv"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
@@ -34,9 +35,10 @@
             android:layout_toRightOf="@+id/news_summary_photo_iv"
             android:lines="2"
             android:textSize="@dimen/medium"
+            app:use_gradient="true"
             tools:text="习近平:吹响建设科技强国号角国号角国号角"/>
 
-        <TextView
+        <com.elyeproj.loaderviewlibrary.LoaderTextView
             android:id="@+id/news_summary_digest_tv"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
@@ -48,9 +50,10 @@
             android:singleLine="true"
             android:textAppearance="@style/TextAppearance.AppCompat.Small"
             android:textSize="@dimen/small"
+            app:use_gradient="true"
             tools:text="科技是国之利器，中国人民生活要好，必须有强大科技。"/>
 
-        <TextView
+        <com.elyeproj.loaderviewlibrary.LoaderTextView
             android:id="@+id/news_summary_ptime_tv"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
@@ -59,6 +62,7 @@
             android:layout_marginBottom="4dp"
             android:layout_marginRight="@dimen/item_margin"
             android:textSize="@dimen/micro"
+            app:use_gradient="true"
             tools:text="05-28 20:09"/>
 
     </RelativeLayout>

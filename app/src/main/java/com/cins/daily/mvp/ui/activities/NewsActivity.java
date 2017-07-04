@@ -18,7 +18,6 @@ import com.cins.daily.annotation.BindValues;
 import com.cins.daily.common.Constants;
 import com.cins.daily.event.ChannelChangeEvent;
 import com.cins.daily.event.ScrollToTopEvent;
-
 import com.cins.daily.mvp.entity.NewsChannelTable;
 import com.cins.daily.mvp.presenter.impl.NewsPresenterImpl;
 import com.cins.daily.mvp.ui.activities.base.BaseActivity;
@@ -27,6 +26,8 @@ import com.cins.daily.mvp.ui.fragment.NewsListFragment;
 import com.cins.daily.mvp.view.NewsView;
 import com.cins.daily.utils.MyUtils;
 import com.cins.daily.utils.RxBus;
+import com.elyeproj.loaderviewlibrary.LoaderImageView;
+import com.elyeproj.loaderviewlibrary.LoaderTextView;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -115,6 +116,13 @@ public class NewsActivity extends BaseActivity implements NewsView {
             setNewsList(newsChannels, channelNames);
             setViewPager(channelNames);
         }
+    }
+
+    private void resetLoader(View view) {
+        ((LoaderImageView)findViewById(R.id.news_summary_photo_iv)).resetLoader();
+        ((LoaderTextView)findViewById(R.id.news_summary_title_tv)).resetLoader();
+        ((LoaderTextView)findViewById(R.id.news_summary_digest_tv)).resetLoader();
+        ((LoaderTextView)findViewById(R.id.news_summary_ptime_tv)).resetLoader();
     }
 
     private void setNewsList(List<NewsChannelTable> newsChannels, List<String> channelNames) {
